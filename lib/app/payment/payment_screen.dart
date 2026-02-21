@@ -1,9 +1,12 @@
+import 'package:confetti/confetti.dart';
 import 'package:fgm_lyrics_app/app/data/payment_model.dart';
 import 'package:fgm_lyrics_app/app/payment/payment_provider.dart';
 import 'package:fgm_lyrics_app/core/utils/context_extension.dart';
 import 'package:fgm_lyrics_app/core/utils/payunit_config.dart';
 import 'package:fgm_lyrics_app/core/utils/phone_validation.dart';
 import 'package:fgm_lyrics_app/core/widgets/app_default_spacing.dart';
+import 'package:fgm_lyrics_app/core/widgets/app_headline_text.dart';
+import 'package:fgm_lyrics_app/core/widgets/app_progress_indicator.dart';
 import 'package:fgm_lyrics_app/core/widgets/form_builder_phone_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -24,10 +27,26 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
     initialValue: const PhoneNumber(isoCode: IsoCode.CM, nsn: ""),
   );
   final _formKey = GlobalKey<FormBuilderState>();
+  bool _hasShownSuccessDialog = false;
 
   @override
   Widget build(BuildContext context) {
     final paymentAsyncState = ref.watch(paymentProvider);
+
+    // Listen for payment success
+    ref.listen<AsyncValue<PaymentState>>(paymentProvider, (previous, next) {
+      next.whenData((paymentState) {
+        if (paymentState.statusResponse != null &&
+            paymentState.statusResponse!.statusCode == 200 &&
+            paymentState.isPaymentSuccessful &&
+            !_hasShownSuccessDialog) {
+          _hasShownSuccessDialog = true;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _showSuccessDialog(context);
+          });
+        }
+      });
+    });
 
     return SliverToBoxAdapter(
       child: paymentAsyncState.when(
@@ -66,222 +85,173 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
   }
 
   Widget _buildPaymentForm(BuildContext context, PaymentState paymentState) {
-    return AppDefaultSpacing(
-      child: SingleChildScrollView(
-        child: FormBuilder(
-          key: _formKey,
-          child: Column(
-            spacing: 16,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Image.asset('assets/logo_pay.png'),
-              Text(
-                "Remplissez les champs ci-dessous pour payer.",
-                textAlign: TextAlign.center,
-                style: context.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(
-                    context,
-                  ).textTheme.headlineSmall!.color?.withValues(alpha: .8),
+    final gateway = paymentState.selectedGateway;
+    return AbsorbPointer(
+      absorbing: paymentState.isLoading,
+      child: AppDefaultSpacing(
+        child: SingleChildScrollView(
+          child: FormBuilder(
+            key: _formKey,
+            child: Column(
+              spacing: 16,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Image.asset('assets/logo_pay.png'),
+                const AppHeadlineText(
+                  text: "Remplissez les champs ci-dessous pour payer.",
                 ),
-              ),
-              Text(
-                "Juste quelques informations pour vous permettre de payer et de recevoir votre accès à vie.",
-                style: context.textTheme.labelLarge?.copyWith(
-                  color: Theme.of(context).textTheme.labelLarge!.color,
-                ),
-                textAlign: TextAlign.center,
-              ),
 
-              FormBuilderTextField(
-                name: 'name',
-                decoration: const InputDecoration(hintText: 'Nom & Prénom'),
-                textInputAction: TextInputAction.next,
-                keyboardType: TextInputType.name,
-                validator: FormBuilderValidators.minLength(
-                  3,
-                  errorText:
-                      'Le nom ou prénom doit contenir au moins 3 caractères',
+                FormBuilderTextField(
+                  name: 'name',
+                  decoration: const InputDecoration(hintText: 'Nom & Prénom'),
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.name,
+                  validator: FormBuilderValidators.minLength(
+                    3,
+                    errorText:
+                        'Le nom ou prénom doit contenir au moins 3 caractères',
+                  ),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
-                autovalidateMode: AutovalidateMode.onUnfocus,
-              ),
 
-              FormBuilderPhoneField(
-                name: 'phone',
-                hintText: 'Numéro de téléphone',
-                phoneController: _phoneController,
-                isCountrySelectionEnabled: false,
-                autovalidateMode: AutovalidateMode.onUnfocus,
-                validator: _validatePhone,
-                textInputAction: TextInputAction.done,
-                keyboardType: TextInputType.phone,
-                decoration: const InputDecoration(
+                FormBuilderPhoneField(
+                  name: 'phone',
                   hintText: 'Numéro de téléphone',
+                  phoneController: _phoneController,
+                  isCountrySelectionEnabled: false,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (phone) => _validatePhone(phone, gateway),
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.phone,
+                  decoration: const InputDecoration(
+                    hintText: 'Numéro de téléphone',
+                  ),
                 ),
-              ),
-              FormBuilderTextField(
-                name: 'email',
-                decoration: const InputDecoration(
-                  hintText: 'Adresse mail (optionnel)',
+                FormBuilderTextField(
+                  name: 'email',
+                  decoration: const InputDecoration(
+                    hintText: 'Adresse mail (optionnel)',
+                  ),
+                  validator: _formKey.currentState?.value['email'] == null
+                      ? null
+                      : FormBuilderValidators.email(
+                          errorText: 'Adresse mail invalide',
+                        ),
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.emailAddress,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
-                validator: _formKey.currentState?.value['email'] == null
-                    ? null
-                    : FormBuilderValidators.email(
-                        errorText: 'Veuillez entrer une adresse mail valide',
-                      ),
-                textInputAction: TextInputAction.next,
-                keyboardType: TextInputType.emailAddress,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-              ),
-              const GutterSmall(),
+                const GutterSmall(),
 
-              // Show payment methods if payment is initialized
-              // if (paymentState.initializeResponse != null) ...[
-              //   Text(
-              //     'Choisissez votre mode de paiement :',
-              //     style: context.textTheme.titleMedium?.copyWith(
-              //       fontWeight: FontWeight.w600,
-              //     ),
-              //   ),
-              //   const Gutter(),
-              //   ...paymentState.availableProviders.map(
-              //     (provider) => Card(
-              //       margin: const EdgeInsets.only(bottom: 8),
-              //       child: ListTile(
-              //         leading: CircleAvatar(
-              //           backgroundImage: NetworkImage(provider.logo),
-              //           backgroundColor: Colors.transparent,
-              //         ),
-              //         title: Text(provider.name),
-              //         subtitle: Text(provider.country.countryName),
-              //         trailing:
-              //             paymentState.selectedGateway == provider.shortcode
-              //             ? const Icon(Icons.check_circle, color: Colors.green)
-              //             : null,
-              //         onTap: () => _selectPaymentMethod(provider.shortcode),
-              //       ),
-              //     ),
-              //   ),
-              //   const Gutter(),
-              // ],
+                ElevatedButton.icon(
+                  onPressed: () {
+                    if (_formKey.currentState?.saveAndValidate() ?? false) {
+                      showAdaptiveDialog(
+                        builder: (context) => Dialog(
+                          insetPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadiusGeometry.circular(10),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'Confirmation de paiement',
+                                  style: context.textTheme.titleLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const Gutter(),
+                                Text(
+                                  'Vous serez débité de ${PayUnitConfig.appPrice} XAF sur votre compte Mobile Money. Êtes-vous sûr de vouloir continuer ?',
+                                  style: context.textTheme.bodyLarge,
+                                ),
+                                const Gutter(),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(false),
+                                      child: const Text('Annuler'),
+                                    ),
+                                    const Gutter(),
+                                    TextButton(
+                                      onPressed: () async {
+                                        await _processPayment();
+                                        Navigator.of(context).pop(true);
+                                      },
+                                      child: const Text("Oui, continuer"),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        context: context,
+                      );
+                    }
+                  },
+                  icon: paymentState.isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: AppProgressIndicator(),
+                        )
+                      : null,
 
-              // Show payment status if available
-              // if (paymentState.statusResponse != null) ...[
-              //   Card(
-              //     color: _getStatusColor(
-              //       paymentState.statusResponse!.data.transactionStatus,
-              //     ),
-              //     child: Padding(
-              //       padding: const EdgeInsets.all(16),
-              //       child: Column(
-              //         children: [
-              //           Icon(
-              //             _getStatusIcon(
-              //               paymentState.statusResponse!.data.transactionStatus,
-              //             ),
-              //             size: 48,
-              //             color: Colors.white,
-              //           ),
-              //           const SizedBox(height: 8),
-              //           Text(
-              //             ref
-              //                 .read(paymentProvider.notifier)
-              //                 .getStatusMessage(
-              //                   paymentState
-              //                       .statusResponse!
-              //                       .data
-              //                       .transactionStatus,
-              //                 ),
-              //             style: context.textTheme.titleMedium?.copyWith(
-              //               color: Colors.white,
-              //               fontWeight: FontWeight.bold,
-              //             ),
-              //             textAlign: TextAlign.center,
-              //           ),
-              //           if (paymentState.isPaymentPending) ...[
-              //             const SizedBox(height: 8),
-              //             const CircularProgressIndicator(color: Colors.white),
-              //           ],
-              //         ],
-              //       ),
-              //     ),
-              //   ),
-              //   const Gutter(),
-              // ],
-
-              // Show error if any
-              // if (paymentState.error != null) ...[
-              //   Card(
-              //     color: Colors.red.shade100,
-              //     child: Padding(
-              //       padding: const EdgeInsets.all(16),
-              //       child: Row(
-              //         children: [
-              //           Icon(Icons.error, color: Colors.red.shade700),
-              //           const SizedBox(width: 8),
-              //           Expanded(
-              //             child: Text(
-              //               paymentState.error!,
-              //               style: TextStyle(color: Colors.red.shade700),
-              //             ),
-              //           ),
-              //           IconButton(
-              //             onPressed: () =>
-              //                 ref.read(paymentProvider.notifier).clearError(),
-              //             icon: const Icon(Icons.close),
-              //             color: Colors.red.shade700,
-              //           ),
-              //         ],
-              //       ),
-              //     ),
-              //   ),
-              //   const Gutter(),
-              // ],
-              ElevatedButton(
-                onPressed:
-                    (paymentState.isLoading ||
-                        _formKey.currentState?.saveAndValidate() != true)
-                    ? null
-                    : _processPayment,
-                child: paymentState.isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text(
-                        'Payer maintenant ${PayUnitConfig.appPrice} XAF',
-                      ),
-              ),
-            ],
+                  label: paymentState.isLoading
+                      ? const Text('Transaction en cours...')
+                      : const Text('Confirmer et Payer'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  String? _validatePhone(PhoneNumber? value) {
-    if (value == null || value.nsn.isEmpty) {
+  String? _validatePhone(PhoneNumber? phone, String? gateway) {
+    if (phone == null || phone.nsn.isEmpty) {
       return 'Le numéro de téléphone est requis';
     }
 
     // Validate that it's a valid Cameroon phone number
-    if (value.isoCode != IsoCode.CM) {
+    if (phone.isoCode != IsoCode.CM) {
       return 'Veuillez sélectionner un numéro Camerounais';
     }
 
     // Check if the phone number is valid for Cameroon
-    if (!value.isValid()) {
+    if (!phone.isValid()) {
       return 'Numéro de téléphone invalide';
     }
-    if (!isMTN(value.nsn) || !isOrange(value.nsn)) {
-      return 'Uniquement les numéros MTN ou Orange pour le moment';
+
+    if (gateway == "CM_MTNMOMO") {
+      if (!isMTN(phone.nsn)) {
+        return "Ceci n'est pas un numéro MTN valide";
+      }
+    }
+
+    if (gateway == "CM_ORANGE") {
+      if (!isOrange(phone.nsn)) {
+        return "Ceci n'est pas un numéro ORANGE valide";
+      }
+    }
+
+    if (!isValidCameroonMobile(phone.nsn)) {
+      return 'Uniquement les numéros MTN et Orange pour le moment';
     }
 
     return null;
   }
 
-  void _processPayment() {
+  Future<void> _processPayment() async {
     final formState = _formKey.currentState;
     if (formState == null) return;
 
@@ -302,7 +272,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
         currency: PayUnitConfig.currency,
       );
 
-      ref
+      await ref
           .read(paymentProvider.notifier)
           .initializePayment(
             payment: payment,
@@ -320,7 +290,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
       currency: PayUnitConfig.currency,
     );
 
-    ref
+    await ref
         .read(paymentProvider.notifier)
         .processPayment(
           payment: payment,
@@ -330,48 +300,93 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
         );
   }
 
-  /// Get button text based on payment state
-  // String _getButtonText(PaymentState state) {
-  //   if (state.initializeResponse == null) {
-  //     return 'Continuer';
-  //   } else if (state.selectedGateway == null) {
-  //     return 'Sélectionner un mode de paiement';
-  //   } else if (state.isPaymentSuccessful) {
-  //     return 'Paiement réussi !';
-  //   } else if (state.isPaymentPending) {
-  //     return 'Vérifier le statut';
-  //   } else {
-  //     return 'Payer maintenant';
-  //   }
-  // }
+  void _showSuccessDialog(BuildContext context) {
+    final confettiController = ConfettiController(
+      duration: const Duration(seconds: 2),
+    );
+    confettiController.play();
 
-  // /// Get status color based on payment status
-  // Color _getStatusColor(String status) {
-  //   switch (status.toUpperCase()) {
-  //     case 'SUCCESS':
-  //       return Colors.green;
-  //     case 'PENDING':
-  //       return Colors.orange;
-  //     case 'FAILED':
-  //     case 'CANCELLED':
-  //       return Colors.red;
-  //     default:
-  //       return Colors.grey;
-  //   }
-  // }
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: Colors.black26,
+      builder: (dialogContext) => PopScope(
+        canPop: false,
+        child: Dialog(
+          backgroundColor: Theme.of(context).cardTheme.color,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(color: Colors.green.withValues(alpha: .5)),
+          ),
+          child: ConfettiWidget(
+            confettiController: confettiController,
+            numberOfParticles: 150,
+            gravity: 1,
+            blastDirectionality: BlastDirectionality.explosive,
+            maxBlastForce: 200,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.check_circle_rounded,
+                    size: 60,
+                    color: Colors.green,
+                  ),
+                  const Gutter(),
+                  Text(
+                    'Paiement réussi !',
+                    style: context.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const GutterSmall(),
+                  Text(
+                    'Votre paiement a été effectué avec succès.',
+                    style: context.textTheme.bodyLarge?.copyWith(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: .5),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const Gutter.custom(size: 24),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Dismiss the WoltModalSheet by popping the navigator
+                      Navigator.of(dialogContext).pop();
 
-  // /// Get status icon based on payment status
-  // IconData _getStatusIcon(String status) {
-  //   switch (status.toUpperCase()) {
-  //     case 'SUCCESS':
-  //       return Icons.check_circle;
-  //     case 'PENDING':
-  //       return Icons.access_time;
-  //     case 'FAILED':
-  //     case 'CANCELLED':
-  //       return Icons.error;
-  //     default:
-  //       return Icons.info;
-  //   }
-  // }
+                      Navigator.of(context).pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.green.shade600,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 32,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: const Text(
+                      'Continuer',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    ).then((_) {
+      confettiController.dispose();
+    });
+  }
 }

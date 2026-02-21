@@ -4,23 +4,25 @@ publish_to: 'none'
 version: 0.1.0
 
 environment:
-  sdk: ^3.8.1
+  sdk: ^3.10.7
 
 dependencies:
   flutter:
     sdk: flutter
-  google_fonts: ^6.3.2
-  shared_preferences: ^2.5.3
-  share_plus: ^12.0.0
+  google_fonts: ^8.0.1
+  shared_preferences: ^2.5.4
+  share_plus: ^12.0.1
   flutter_riverpod: ^3.0.1
   flutter_gutter: ^2.2.0
   audioplayers: ^6.5.1
-  flutter_form_builder: ^10.2.0
-  form_builder_validators: ^11.2.0
-  phone_form_field: ^10.0.11+13
-  http: ^1.5.0
+  flutter_form_builder: ^10.3.0+1
+  form_builder_validators: ^11.3.0
+  phone_form_field: ^10.0.17
+  http: ^1.6.0
   json_annotation: ^4.9.0
   wolt_modal_sheet: ^0.11.0
+  confetti: ^0.8.0
+  
 
 dev_dependencies:
   flutter_test:
@@ -29,17 +31,13 @@ dev_dependencies:
   custom_lint: ^0.8.0
   riverpod_lint: ^3.0.1
   flutter_launcher_icons: ^0.14.4
-  json_serializable: ^6.11.1
-  build_runner: ^2.7.1
+  json_serializable: ^6.11.0
+  build_runner: ^2.11.0
 
 flutter:
   uses-material-design: true
   assets:
-    - assets/en.json
-    - assets/fr.json
-    - assets/logo.png
-    - assets/logo_pay.png
-    - assets/songs/
+    - assets/
 
 flutter_launcher_icons:
   android: "launcher_icon"

@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 
 class Lyric {
+  final dynamic id;
   final String songTitle;
   final int songId;
-  final dynamic id;
   final String chorus;
   final String key;
   final String author;

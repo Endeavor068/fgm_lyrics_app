@@ -22,15 +22,11 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
       child: AppDefaultSpacing(
         child: Column(
           children: [
-            Image.asset('assets/payment_mean.png', height: 300),
-            const AppHeadlineText(text: "Choisissez votre mode de paiement"),
-            // Text(
-            //   'Choisissez votre mode de paiement :',
-            //   style: context.textTheme.titleLarge?.copyWith(
-            //     fontWeight: FontWeight.w600,
-            //   ),
-            // ),
-            const GutterLarge(),
+            Image.asset('assets/payment_mean.png', height: 250),
+            const Gutter(),
+            const AppHeadlineText(text: "Choisissez un moyen de paiement"),
+
+            const Gutter(),
             ...paymentState.availableProviders.map((provider) {
               final isSelected =
                   paymentState.selectedGateway == provider.shortcode;

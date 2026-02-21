@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // final Store store = await openStore(directory: Directory('lyrics_db'));
   runApp(const ProviderScope(child: HymnApp()));
 }
 

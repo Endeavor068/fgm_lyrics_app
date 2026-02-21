@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:fgm_lyrics_app/app/favorite/favorite_controller.dart';
 import 'package:fgm_lyrics_app/app/locale/locale_provider.dart';
 import 'package:fgm_lyrics_app/app/locale/theme_provider.dart';
 import 'package:fgm_lyrics_app/core/models/lyric.dart';
@@ -83,8 +84,24 @@ class _LyricDetailScreenState extends ConsumerState<LyricDetailScreen>
     return religiousImages[index];
   }
 
+  /// Favorite key: id can be int (e.g. 1) or string (e.g. "160A").
+  String get _favoriteIdKey => widget.lyric.id.toString();
+
+  Future<void> _toggleFavorite() async {
+    try {
+      await ref
+          .read(favoriteNotifierProvider.notifier)
+          .toggleFavorite(widget.lyric.id);
+    } catch (e) {
+      debugPrint('Error toggling favorite: ${e.toString()}');
+    } finally {
+      ref.invalidate(isFavoriteProvider(_favoriteIdKey));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isFavorite = ref.watch(isFavoriteProvider(_favoriteIdKey));
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: CustomScrollView(
@@ -97,7 +114,9 @@ class _LyricDetailScreenState extends ConsumerState<LyricDetailScreen>
             expandedHeight: context.height * 0.2,
             actions: [
               IconButton(
-                icon: const Icon(Icons.dark_mode_rounded),
+                icon: ref.watch(themeProvider) == ThemeMode.light
+                    ? const Icon(Icons.dark_mode_rounded)
+                    : const Icon(Icons.light_mode_rounded),
                 onPressed: () => ref.read(themeProvider.notifier).toggleTheme(),
               ),
 
@@ -112,6 +131,17 @@ class _LyricDetailScreenState extends ConsumerState<LyricDetailScreen>
                   );
                 },
                 icon: const Icon(Icons.ios_share_rounded),
+              ),
+              IconButton(
+                onPressed: () async {
+                  await _toggleFavorite();
+                },
+                icon: Icon(
+                  isFavorite.value ?? false
+                      ? Icons.favorite_rounded
+                      : Icons.favorite_border_rounded,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               ),
             ],
             flexibleSpace: FlexibleSpaceBar(
@@ -283,7 +313,7 @@ class _LyricDetailScreenState extends ConsumerState<LyricDetailScreen>
             sliver: SliverList(
               delegate: SliverChildListDelegate([
                 // Content below tabs
-                _buildTabContentBody(),
+                _buildTabContentSwitcher(),
               ]),
             ),
           ),
@@ -432,7 +462,7 @@ class _LyricDetailScreenState extends ConsumerState<LyricDetailScreen>
     );
   }
 
-  Widget _buildTabContentBody() {
+  Widget _buildTabContentSwitcher() {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 100),
       child: _selectedTabIndex == 0
@@ -465,14 +495,7 @@ class _LyricDetailScreenState extends ConsumerState<LyricDetailScreen>
         children: [
           // First verse or all lyrics
           if (widget.lyric.enLyrics.isNotEmpty)
-            Text(
-              textAlign: TextAlign.center,
-              widget.lyric.enLyrics.first,
-              style: context.textTheme.bodyLarge?.copyWith(
-                height: 1.6,
-                color: context.textTheme.bodyLarge?.color,
-              ),
-            ),
+            LyricItem(index: 1, verse: widget.lyric.enLyrics.first),
 
           // Chorus if exists
           if (widget.lyric.chorus.isNotEmpty) ...[
@@ -491,23 +514,38 @@ class _LyricDetailScreenState extends ConsumerState<LyricDetailScreen>
 
           // Additional verses
           if (widget.lyric.enLyrics.length > 1)
-            ...widget.lyric.enLyrics
-                .skip(1)
-                .map(
-                  (verse) => Column(
-                    children: [
-                      const SizedBox(height: 20),
-                      Text(
-                        textAlign: TextAlign.center,
-                        verse,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          height: 1.6,
-                          color: Theme.of(context).textTheme.bodyLarge?.color,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+            ...widget.lyric.enLyrics.skip(1).map((verse) {
+              final index = widget.lyric.enLyrics.indexOf(verse);
+              return Column(
+                children: [
+                  const SizedBox(height: 20),
+                  LyricItem(verse: verse, index: index + 1),
+
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: [
+                  //     Text(
+                  //       '${widget.lyric.enLyrics.indexOf(verse) + 1}.',
+                  //       style: Theme.of(context).textTheme.bodyLarge
+                  //           ?.copyWith(fontWeight: FontWeight.bold),
+                  //     ),
+                  //     const Gutter(),
+                  //     Text(
+                  //       textAlign: TextAlign.center,
+                  //       verse,
+                  //       style: Theme.of(context).textTheme.bodyLarge
+                  //           ?.copyWith(
+                  //             height: 1.6,
+                  //             color: Theme.of(
+                  //               context,
+                  //             ).textTheme.bodyLarge?.color,
+                  //           ),
+                  //     ),
+                  //   ],
+                  // ),
+                ],
+              );
+            }),
         ],
       ),
     );
@@ -669,7 +707,7 @@ class _LyricDetailScreenState extends ConsumerState<LyricDetailScreen>
   }
 
   String get hymnText {
-    return "*${widget.lyric.songId}.  ${widget.lyric.songTitle}*\n\n"
+    return "*${widget.lyric.id}.  ${widget.lyric.songTitle}*\n\n"
         "${widget.lyric.enLyrics.first}\n\n\n"
         "${widget.lyric.chorus.isNotEmpty
             ? ref.watch(deviceLocaleProvider) == LanguageEnum.en.name
@@ -678,6 +716,41 @@ class _LyricDetailScreenState extends ConsumerState<LyricDetailScreen>
             : ''}"
         "${widget.lyric.chorus.isNotEmpty ? "${widget.lyric.chorus}\n\n\n" : ''}"
         "${widget.lyric.enLyrics.length > 1 ? widget.lyric.enLyrics.sublist(1, widget.lyric.enLyrics.length - 1).map((lyric) => "${lyric.trim()}\n\n").join(' ').toString() : ''}";
+  }
+}
+
+class LyricItem extends StatelessWidget {
+  const LyricItem({super.key, required this.verse, required this.index});
+
+  final String verse;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    final textStyle = Theme.of(context).textTheme.bodyLarge;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            '$index.',
+            style: textStyle?.copyWith(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
+          const Gutter(),
+          Expanded(
+            child: Text(
+              verse,
+              style: textStyle?.copyWith(height: 1.6),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
