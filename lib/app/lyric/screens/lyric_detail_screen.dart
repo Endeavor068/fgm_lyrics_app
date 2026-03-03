@@ -73,16 +73,16 @@ class _LyricDetailScreenState extends ConsumerState<LyricDetailScreen>
   }
 
   /// Gets a randomized religious image URL based on songId for consistency
-  String _getReligiousImageUrl() {
-    // List of free religious images from Unsplash
-    final List<String> religiousImages = [
-      "https://images.unsplash.com/photo-1520446266423-6daca23fe8c7?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    ];
+  // String _getReligiousImageUrl() {
+  //   // // List of free religious images from Unsplash
+  //   // final List<String> religiousImages = [
+  //   //   "https://images.unsplash.com/photo-1520446266423-6daca23fe8c7?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  //   // ];
 
-    // Use songId as seed for consistent image per song
-    final index = widget.lyric.songId % religiousImages.length;
-    return religiousImages[index];
-  }
+  //   // // Use songId as seed for consistent image per song
+  //   // final index = widget.lyric.songId % religiousImages.length;
+  //   // return religiousImages[index];
+  // }
 
   /// Favorite key: id can be int (e.g. 1) or string (e.g. "160A").
   String get _favoriteIdKey => widget.lyric.id.toString();
@@ -155,19 +155,12 @@ class _LyricDetailScreenState extends ConsumerState<LyricDetailScreen>
                 fit: StackFit.expand,
                 children: [
                   // Background Image
-                  Image.network(
-                    _getReligiousImageUrl(),
+                  Image.asset(
+                    "assets/logo2.png",
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
                         color: Theme.of(context).colorScheme.onPrimary,
-                      );
-                    },
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return Container(
-                        color: Theme.of(context).colorScheme.primaryContainer,
-                        child: const Center(child: CircularProgressIndicator()),
                       );
                     },
                   ),

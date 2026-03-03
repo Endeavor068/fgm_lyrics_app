@@ -1,8 +1,11 @@
 import 'package:fgm_lyrics_app/app/locale/theme_provider.dart';
-import 'package:fgm_lyrics_app/app/lyric/screens/lyric_list_screen.dart';
+import 'package:fgm_lyrics_app/app/splash/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:upgrader/upgrader.dart';
+
+final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,7 +23,7 @@ class HymnApp extends ConsumerWidget {
     // Safe font family with fallbacks
     String? fontFamily;
     try {
-      fontFamily = GoogleFonts.lato().fontFamily;
+      fontFamily = GoogleFonts.roboto().fontFamily;
     } catch (e) {
       // Fallback to system fonts if Google Fonts fails
       fontFamily = null; // Will use default system font
@@ -31,21 +34,15 @@ class HymnApp extends ConsumerWidget {
       title: 'FGM Hymns',
       theme: ThemeData(
         fontFamily: fontFamily,
-        fontFamilyFallback: const [
-          'SF Pro Text', // iOS
-          'Roboto', // Android
-          'Segoe UI', // Windows
-          'Arial', // Fallback
-        ],
         brightness: Brightness.light,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue,
+          seedColor: Colors.redAccent,
           brightness: Brightness.light,
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 10),
-            backgroundColor: Colors.blue,
+            backgroundColor: Colors.redAccent,
             foregroundColor: Colors.white,
             textStyle: TextStyle(
               fontFamily: fontFamily,
@@ -64,11 +61,11 @@ class HymnApp extends ConsumerWidget {
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
 
-            borderSide: BorderSide(color: Colors.grey.withAlpha(20)),
+            // borderSide: BorderSide(color: Colors.grey.withAlpha(20)),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: Colors.grey.withAlpha(20)),
+            // borderSide: BorderSide(color: Colors.grey.withAlpha(20)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
@@ -84,15 +81,9 @@ class HymnApp extends ConsumerWidget {
       ),
       darkTheme: ThemeData(
         fontFamily: fontFamily,
-        fontFamilyFallback: const [
-          'SF Pro Text', // iOS
-          'Roboto', // Android
-          'Segoe UI', // Windows
-          'Arial', // Fallback
-        ],
         brightness: Brightness.dark,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue,
+          seedColor: Colors.redAccent,
           brightness: Brightness.dark,
         ),
         inputDecorationTheme: InputDecorationTheme(
@@ -130,7 +121,11 @@ class HymnApp extends ConsumerWidget {
         ),
       ),
       themeMode: themeMode,
-      home: const LyricListScreen(),
+      home: UpgradeAlert(
+        navigatorKey: rootNavigatorKey,
+        upgrader: Upgrader(),
+        child: const SplashScreen(),
+      ),
     );
   }
 }

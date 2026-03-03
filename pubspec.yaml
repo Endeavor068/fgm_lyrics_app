@@ -1,10 +1,10 @@
 name: fgm_lyrics_app
-description: "A Flutter app for browsing and sharing lyrics, supporting multiple languages and modern UI."
+description: "Full Gospel Mission app for browsing and sharing new hymns lyrics, supporting multiple languages and modern UI."
 publish_to: 'none'
-version: 0.1.0
+version: 0.1.1+2
 
 environment:
-  sdk: ^3.10.7
+  sdk: ^3.11.0
 
 dependencies:
   flutter:
@@ -22,6 +22,7 @@ dependencies:
   json_annotation: ^4.9.0
   wolt_modal_sheet: ^0.11.0
   confetti: ^0.8.0
+  upgrader: ^12.5.0
   
 
 dev_dependencies:

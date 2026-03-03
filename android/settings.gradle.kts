@@ -18,7 +18,10 @@ pluginManagement {
 
 plugins {
     id("dev.flutter.flutter-plugin-loader") version "1.0.0"
-    id("com.android.application") version "8.7.0" apply false
+    // The Android Gradle plugin must be at least 8.9.1 to satisfy
+    // androidx.browser/core dependencies. 8.9.1+ is required by
+    // core-ktx 1.17.0 and others.
+    id("com.android.application") version "8.9.1" apply false
     id("org.jetbrains.kotlin.android") version "2.2.20" apply false
 }
 

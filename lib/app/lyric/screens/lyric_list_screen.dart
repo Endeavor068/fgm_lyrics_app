@@ -10,6 +10,7 @@ import 'package:fgm_lyrics_app/core/widgets/app_default_spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LyricListScreen extends ConsumerStatefulWidget {
   const LyricListScreen({super.key});
@@ -75,7 +76,7 @@ class _LyricListScreenState extends ConsumerState<LyricListScreen> {
     final lyrics = languageIsEnglish
         ? ref.watch(englishHymnProvider).requireValue
         : ref.watch(frenchHymnProvider).requireValue;
-    final currentLangString = languageIsEnglish ? 'EN' : 'FR';
+    final currentLangString = languageIsEnglish ? 'FR' : 'EN';
     return Scaffold(
       appBar: AppBar(
         surfaceTintColor: Colors.transparent,
@@ -103,7 +104,15 @@ class _LyricListScreenState extends ConsumerState<LyricListScreen> {
             onPressed: () => context.push(const SearchScreen()),
           ),
         ],
-        title: const Text("FGM Hymns"),
+        title: Row(
+          children: [
+            Image.asset('assets/logo2.png', width: 32, height: 32),
+            Text(
+              "Hymnals",
+              style: TextStyle(fontSize: 22, fontFamily: GoogleFonts.roboto().fontFamily),
+            ),
+          ],
+        ),
       ),
       body: AppDefaultSpacing(child: LyricListView(lyrics: lyrics)),
     );
