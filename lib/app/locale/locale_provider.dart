@@ -9,7 +9,12 @@ final deviceLocaleProvider = NotifierProvider<DeviceLocaleNotifier, String>(
 
 class DeviceLocaleNotifier extends Notifier<String> {
   @override
-  String build() => PlatformDispatcher.instance.locale.languageCode;
+  String build() {
+    final code = PlatformDispatcher.instance.locale.languageCode;
+    return code == LanguageEnum.fr.name
+        ? LanguageEnum.fr.name
+        : LanguageEnum.en.name;
+  }
   void changeLocale() {
     state = state == LanguageEnum.en.name
         ? LanguageEnum.fr.name

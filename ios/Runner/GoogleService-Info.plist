@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyCZks5PODBM5BKOKSl_foEIUnv8z6kj7PI</string>
+	<key>GCM_SENDER_ID</key>
+	<string>1080412997001</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.fgmLyricsApp</string>
+	<key>PROJECT_ID</key>
+	<string>studio-2294305185-c0b44</string>
+	<key>STORAGE_BUCKET</key>
+	<string>studio-2294305185-c0b44.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:1080412997001:ios:9fa5610919264777124d58</string>
+</dict>
+</plist>

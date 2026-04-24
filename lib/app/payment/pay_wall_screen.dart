@@ -5,6 +5,7 @@ import 'package:fgm_lyrics_app/core/utils/payunit_config.dart';
 import 'package:fgm_lyrics_app/core/widgets/app_default_spacing.dart';
 import 'package:fgm_lyrics_app/core/widgets/app_headline_text.dart';
 import 'package:fgm_lyrics_app/core/widgets/app_progress_indicator.dart';
+import 'package:fgm_lyrics_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -38,6 +39,7 @@ class _PayWallScreenState extends ConsumerState<PayWallScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return SliverToBoxAdapter(
       child: AppDefaultSpacing(
         child: SingleChildScrollView(
@@ -47,10 +49,10 @@ class _PayWallScreenState extends ConsumerState<PayWallScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Image.asset('assets/logo_pay.png', height: 250),
-                const AppHeadlineText(text: "Acheter l'application !"),
+                AppHeadlineText(text: l10n.payWallTitle),
                 const GutterTiny(),
                 Text(
-                  "Il semble que vous n'ayez pas encore acheté l'application. Veuillez suivre les étapes pour bénéficier d'un accès à vie.",
+                  l10n.payWallBody,
                   style: context.textTheme.labelLarge?.copyWith(
                     color: Theme.of(
                       context,
@@ -74,8 +76,8 @@ class _PayWallScreenState extends ConsumerState<PayWallScreen> {
                     widget.onTap();
                   },
                   label: isLoading
-                      ? const Text('Chargement...')
-                      : const Text('Continuer'),
+                      ? Text(l10n.payWallLoading)
+                      : Text(l10n.payWallContinue),
                   icon: isLoading
                       ? const SizedBox(
                           height: 20,
@@ -88,12 +90,12 @@ class _PayWallScreenState extends ConsumerState<PayWallScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Vous aviez déjà acheté ?"),
+                    Text(l10n.payWallAlreadyPurchased),
                     TextButton(
                       onPressed: () {},
-                      child: const Text(
-                        'Cliquez ici !',
-                        style: TextStyle(fontWeight: FontWeight.w600),
+                      child: Text(
+                        l10n.payWallClickHere,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                     ),
                   ],

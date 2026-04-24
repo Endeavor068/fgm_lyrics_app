@@ -1,0 +1,146 @@
+{
+  "@@locale": "en",
+  "appTitle": "FGM Hymns",
+  "hymnalsTitle": "Hymnals",
+  "settingsTooltip": "Settings",
+  "couldNotLoadHymns": "Could not load hymns. Check connection or retry.",
+  "retry": "Retry",
+  "searchTitle": "Search",
+  "searchHint": "Search hymns…",
+  "favoritesTitle": "Favorites",
+  "favoritesEmpty": "No favorites yet.\nAdd songs from the list to see them here.",
+  "splashOrganizationName": "Full Gospel Mission",
+  "settingsTitle": "Settings",
+  "appearanceSection": "Appearance",
+  "dataSection": "Data",
+  "brightness": "Brightness",
+  "themeLight": "Light",
+  "themeSystem": "System",
+  "themeDark": "Dark",
+  "accentColorTitle": "Accent color",
+  "accentColorSubtitle": "Primary color for buttons and highlights.",
+  "fontSize": "Font Size",
+  "fontSizePt": "{size} pt",
+  "@fontSizePt": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "fontPreviewSample": "Amazing grace, how sweet the sound",
+  "fontFamily": "Font Family",
+  "refreshHymnsTitle": "Refresh hymns from server",
+  "refreshHymnsSubtitle": "Fetch the latest hymn data and update local cache.",
+  "clearDataTitle": "Clear downloaded data",
+  "clearDataSubtitle": "Remove all downloaded audio files and sheet music from this device.",
+  "clearDataDialogTitle": "Clear downloaded data?",
+  "clearDataDialogMessage": "This will delete all downloaded audio files and sheet music from this device. Hymn text will not be affected.",
+  "clear": "Clear",
+  "cancel": "Cancel",
+  "hymnsUpdatedSuccess": "Hymns updated successfully.",
+  "couldNotReachServer": "Could not reach server. Showing cached data.",
+  "downloadedDataCleared": "Downloaded data cleared.",
+  "failedToClearData": "Failed to clear some data. Please try again.",
+  "lyricsTab": "Lyrics",
+  "sheetMusicTab": "Sheet Music",
+  "composedLabel": "Composed",
+  "keyLabel": "Key",
+  "notAvailable": "N/A",
+  "chorusLabel": "Chorus:",
+  "pinchToZoom": "Pinch to zoom",
+  "pinchToZoomPdf": "Swipe sideways to turn pages · pinch to zoom",
+  "sheetMusicHeading": "Sheet Music",
+  "partitionSavedLocal": "Partition saved locally. Tap to open in another app.",
+  "partitionTapDownload": "Tap to download the partition.",
+  "partitionNone": "No sheet music available for this hymn.",
+  "openExternally": "Open externally",
+  "download": "Download",
+  "previousPage": "Previous page",
+  "nextPage": "Next page",
+  "couldNotDisplayImage": "Could not display this image.",
+  "couldNotDisplayPdf": "Could not display this PDF.\n{error}",
+  "@couldNotDisplayPdf": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "couldNotOpenFile": "Could not open file: {error}",
+  "@couldNotOpenFile": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "shareSubjectSuffix": " - FGM Hymns",
+  "shareChorusPrefix": "*Chorus :*\n",
+  "shareRefrainPrefix": "*Refrain :*\n",
+  "downloadFailedGeneric": "Download failed. Please try again later.",
+  "corruptFileRedownloading": "Corrupt file removed. Re-downloading…",
+  "audioCouldNotPlay": "Audio file could not be played.",
+  "errorNoFileForHymn": "No file available for this hymn yet.",
+  "errorInvalidDownloadLink": "The download link is invalid. Please contact support.",
+  "errorNoInternet": "No internet connection. Please try again when online.",
+  "errorDownloadForbidden": "Download not allowed. The file is restricted.",
+  "errorFileNotFound": "File not found. It may have been moved or deleted.",
+  "errorDownloadFailed": "Download failed. Please try again later.",
+  "welcomeTitle": "Welcome to Sacred\nEchoes",
+  "welcomeSubtitle": "Explore a vast collection of hymns and songs to enrich your spiritual journey.",
+  "welcomeStartExploring": "Start Exploring",
+  "welcomeLogIn": "Log In",
+  "labelAuthor": "Author:",
+  "labelKey": "Key:",
+  "payWallTitle": "Buy the app!",
+  "payWallBody": "It looks like you haven't purchased the app yet. Follow the steps to get lifetime access.",
+  "payWallContinue": "Continue",
+  "payWallLoading": "Loading…",
+  "payWallAlreadyPurchased": "Already purchased?",
+  "payWallClickHere": "Tap here",
+  "paymentMethodTitle": "Choose a payment method",
+  "paymentMethodContinue": "Continue",
+  "paymentFormHeadline": "Fill in the fields below to pay.",
+  "paymentHintName": "First & last name",
+  "paymentNameMinLengthError": "Name must be at least 3 characters",
+  "paymentHintPhone": "Phone number",
+  "paymentHintEmail": "Email (optional)",
+  "paymentEmailInvalid": "Invalid email address",
+  "paymentLoadingError": "Loading error",
+  "paymentRetry": "Retry",
+  "paymentConfirmTitle": "Payment confirmation",
+  "paymentConfirmBody": "You will be charged {price} XAF from your Mobile Money account. Do you want to continue?",
+  "@paymentConfirmBody": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentCancel": "Cancel",
+  "paymentYesContinue": "Yes, continue",
+  "paymentProcessing": "Processing transaction…",
+  "paymentConfirmPay": "Confirm and pay",
+  "paymentPhoneRequired": "Phone number is required",
+  "paymentCameroonOnly": "Please use a Cameroon number",
+  "paymentPhoneInvalid": "Invalid phone number",
+  "paymentMtnInvalid": "This is not a valid MTN number",
+  "paymentOrangeInvalid": "This is not a valid Orange number",
+  "paymentMtnOrangeOnly": "Only MTN and Orange numbers for now",
+  "paymentSuccessTitle": "Payment successful!",
+  "paymentSuccessBody": "Your payment was completed successfully.",
+  "paymentSuccessContinue": "Continue",
+  "pdfPageIndicator": "{page} / {total}",
+  "@pdfPageIndicator": {
+    "placeholders": {
+      "page": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "pdfPageLoading": "…"
+}

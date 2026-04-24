@@ -1,5 +1,9 @@
+import 'package:fgm_lyrics_app/app/locale/locale_provider.dart';
 import 'package:fgm_lyrics_app/app/locale/theme_provider.dart';
+import 'package:fgm_lyrics_app/app/settings/theme_seed_color_provider.dart';
 import 'package:fgm_lyrics_app/app/splash/splash_screen.dart';
+import 'package:fgm_lyrics_app/l10n/app_localizations.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,7 +13,9 @@ final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // final Store store = await openStore(directory: Directory('lyrics_db'));
+  // On Android (and other native platforms), Firebase will read configuration
+  // from platform-specific files (e.g. google-services.json on Android).
+  await Firebase.initializeApp();
   runApp(const ProviderScope(child: HymnApp()));
 }
 
@@ -19,6 +25,17 @@ class HymnApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeProvider);
+    final seedIndex = ref.watch(themeSeedIndexProvider);
+    final seedColor =
+        kThemeSeedColors[seedIndex.clamp(0, kThemeSeedColors.length - 1)];
+    final lightScheme = ColorScheme.fromSeed(
+      seedColor: seedColor,
+      brightness: Brightness.light,
+    );
+    final darkScheme = ColorScheme.fromSeed(
+      seedColor: seedColor,
+      brightness: Brightness.dark,
+    );
 
     // Safe font family with fallbacks
     String? fontFamily;
@@ -31,19 +48,19 @@ class HymnApp extends ConsumerWidget {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'FGM Hymns',
+      onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
+      locale: Locale(ref.watch(deviceLocaleProvider)),
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
       theme: ThemeData(
         fontFamily: fontFamily,
         brightness: Brightness.light,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.redAccent,
-          brightness: Brightness.light,
-        ),
+        colorScheme: lightScheme,
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 10),
-            backgroundColor: Colors.redAccent,
-            foregroundColor: Colors.white,
+            backgroundColor: lightScheme.primary,
+            foregroundColor: lightScheme.onPrimary,
             textStyle: TextStyle(
               fontFamily: fontFamily,
               fontWeight: FontWeight.w600,
@@ -70,10 +87,7 @@ class HymnApp extends ConsumerWidget {
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
 
-            borderSide: BorderSide(
-              width: 1,
-              color: Theme.of(context).colorScheme.secondary,
-            ),
+            borderSide: BorderSide(width: 1, color: lightScheme.secondary),
           ),
           fillColor: Colors.grey.withAlpha(15),
           filled: true,
@@ -82,10 +96,7 @@ class HymnApp extends ConsumerWidget {
       darkTheme: ThemeData(
         fontFamily: fontFamily,
         brightness: Brightness.dark,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.redAccent,
-          brightness: Brightness.dark,
-        ),
+        colorScheme: darkScheme,
         inputDecorationTheme: InputDecorationTheme(
           contentPadding: const EdgeInsets.symmetric(horizontal: 16),
           hintStyle: TextStyle(color: Colors.grey.withAlpha(400)),
@@ -100,7 +111,7 @@ class HymnApp extends ConsumerWidget {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(width: 1, color: Colors.grey.shade200),
+            borderSide: BorderSide(width: 1, color: darkScheme.secondary),
           ),
           fillColor: Colors.grey.withAlpha(15),
           filled: true,
@@ -108,8 +119,8 @@ class HymnApp extends ConsumerWidget {
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 10),
-            backgroundColor: Colors.blue,
-            foregroundColor: Colors.white,
+            backgroundColor: darkScheme.primary,
+            foregroundColor: darkScheme.onPrimary,
             textStyle: TextStyle(
               fontFamily: fontFamily,
               fontWeight: FontWeight.w600,

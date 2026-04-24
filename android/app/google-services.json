@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1080412997001",
+    "project_id": "studio-2294305185-c0b44",
+    "storage_bucket": "studio-2294305185-c0b44.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1080412997001:android:a75c7e02f3f4e355124d58",
+        "android_client_info": {
+          "package_name": "com.apps_industry.fgm_lyrics"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAp45fWb7cCAmrT2kWkCQpNvWVlfCZd9Ms"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,4 +1,3 @@
-import 'package:confetti/confetti.dart';
 import 'package:fgm_lyrics_app/app/data/payment_model.dart';
 import 'package:fgm_lyrics_app/app/payment/payment_provider.dart';
 import 'package:fgm_lyrics_app/core/utils/context_extension.dart';
@@ -8,6 +7,7 @@ import 'package:fgm_lyrics_app/core/widgets/app_default_spacing.dart';
 import 'package:fgm_lyrics_app/core/widgets/app_headline_text.dart';
 import 'package:fgm_lyrics_app/core/widgets/app_progress_indicator.dart';
 import 'package:fgm_lyrics_app/core/widgets/form_builder_phone_field.dart';
+import 'package:fgm_lyrics_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
@@ -31,6 +31,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final paymentAsyncState = ref.watch(paymentProvider);
 
     // Listen for payment success
@@ -50,7 +51,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
 
     return SliverToBoxAdapter(
       child: paymentAsyncState.when(
-        data: (paymentState) => _buildPaymentForm(context, paymentState),
+        data: (paymentState) => _buildPaymentForm(context, l10n, paymentState),
         loading: () => const AppDefaultSpacing(
           child: Center(child: CircularProgressIndicator()),
         ),
@@ -62,7 +63,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                 Icon(Icons.error, size: 64, color: Colors.red.shade400),
                 const SizedBox(height: 16),
                 Text(
-                  'Erreur de chargement',
+                  l10n.paymentLoadingError,
                   style: context.textTheme.headlineSmall,
                 ),
                 const SizedBox(height: 8),
@@ -74,7 +75,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () => ref.invalidate(paymentProvider),
-                  child: const Text('Réessayer'),
+                  child: Text(l10n.paymentRetry),
                 ),
               ],
             ),
@@ -84,7 +85,11 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
     );
   }
 
-  Widget _buildPaymentForm(BuildContext context, PaymentState paymentState) {
+  Widget _buildPaymentForm(
+    BuildContext context,
+    AppLocalizations l10n,
+    PaymentState paymentState,
+  ) {
     final gateway = paymentState.selectedGateway;
     return AbsorbPointer(
       absorbing: paymentState.isLoading,
@@ -97,45 +102,38 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Image.asset('assets/logo_pay.png'),
-                const AppHeadlineText(
-                  text: "Remplissez les champs ci-dessous pour payer.",
-                ),
+                AppHeadlineText(text: l10n.paymentFormHeadline),
 
                 FormBuilderTextField(
                   name: 'name',
-                  decoration: const InputDecoration(hintText: 'Nom & Prénom'),
+                  decoration: InputDecoration(hintText: l10n.paymentHintName),
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.name,
                   validator: FormBuilderValidators.minLength(
                     3,
-                    errorText:
-                        'Le nom ou prénom doit contenir au moins 3 caractères',
+                    errorText: l10n.paymentNameMinLengthError,
                   ),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
 
                 FormBuilderPhoneField(
                   name: 'phone',
-                  hintText: 'Numéro de téléphone',
+                  hintText: l10n.paymentHintPhone,
                   phoneController: _phoneController,
                   isCountrySelectionEnabled: false,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (phone) => _validatePhone(phone, gateway),
+                  validator: (phone) => _validatePhone(l10n, phone, gateway),
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(
-                    hintText: 'Numéro de téléphone',
-                  ),
+                  decoration: InputDecoration(hintText: l10n.paymentHintPhone),
                 ),
                 FormBuilderTextField(
                   name: 'email',
-                  decoration: const InputDecoration(
-                    hintText: 'Adresse mail (optionnel)',
-                  ),
+                  decoration: InputDecoration(hintText: l10n.paymentHintEmail),
                   validator: _formKey.currentState?.value['email'] == null
                       ? null
                       : FormBuilderValidators.email(
-                          errorText: 'Adresse mail invalide',
+                          errorText: l10n.paymentEmailInvalid,
                         ),
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.emailAddress,
@@ -160,14 +158,16 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  'Confirmation de paiement',
+                                  l10n.paymentConfirmTitle,
                                   style: context.textTheme.titleLarge?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 const Gutter(),
                                 Text(
-                                  'Vous serez débité de ${PayUnitConfig.appPrice} XAF sur votre compte Mobile Money. Êtes-vous sûr de vouloir continuer ?',
+                                  l10n.paymentConfirmBody(
+                                    PayUnitConfig.appPrice,
+                                  ),
                                   style: context.textTheme.bodyLarge,
                                 ),
                                 const Gutter(),
@@ -177,15 +177,16 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                                     TextButton(
                                       onPressed: () =>
                                           Navigator.of(context).pop(false),
-                                      child: const Text('Annuler'),
+                                      child: Text(l10n.paymentCancel),
                                     ),
                                     const Gutter(),
                                     TextButton(
                                       onPressed: () async {
                                         await _processPayment();
+                                        if (!context.mounted) return;
                                         Navigator.of(context).pop(true);
                                       },
-                                      child: const Text("Oui, continuer"),
+                                      child: Text(l10n.paymentYesContinue),
                                     ),
                                   ],
                                 ),
@@ -206,8 +207,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                       : null,
 
                   label: paymentState.isLoading
-                      ? const Text('Transaction en cours...')
-                      : const Text('Confirmer et Payer'),
+                      ? Text(l10n.paymentProcessing)
+                      : Text(l10n.paymentConfirmPay),
                 ),
               ],
             ),
@@ -217,35 +218,39 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
     );
   }
 
-  String? _validatePhone(PhoneNumber? phone, String? gateway) {
+  String? _validatePhone(
+    AppLocalizations l10n,
+    PhoneNumber? phone,
+    String? gateway,
+  ) {
     if (phone == null || phone.nsn.isEmpty) {
-      return 'Le numéro de téléphone est requis';
+      return l10n.paymentPhoneRequired;
     }
 
     // Validate that it's a valid Cameroon phone number
     if (phone.isoCode != IsoCode.CM) {
-      return 'Veuillez sélectionner un numéro Camerounais';
+      return l10n.paymentCameroonOnly;
     }
 
     // Check if the phone number is valid for Cameroon
     if (!phone.isValid()) {
-      return 'Numéro de téléphone invalide';
+      return l10n.paymentPhoneInvalid;
     }
 
     if (gateway == "CM_MTNMOMO") {
       if (!isMTN(phone.nsn)) {
-        return "Ceci n'est pas un numéro MTN valide";
+        return l10n.paymentMtnInvalid;
       }
     }
 
     if (gateway == "CM_ORANGE") {
       if (!isOrange(phone.nsn)) {
-        return "Ceci n'est pas un numéro ORANGE valide";
+        return l10n.paymentOrangeInvalid;
       }
     }
 
     if (!isValidCameroonMobile(phone.nsn)) {
-      return 'Uniquement les numéros MTN et Orange pour le moment';
+      return l10n.paymentMtnOrangeOnly;
     }
 
     return null;
@@ -301,12 +306,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
   }
 
   void _showSuccessDialog(BuildContext context) {
-    final confettiController = ConfettiController(
-      duration: const Duration(seconds: 2),
-    );
-    confettiController.play();
+    final l10n = AppLocalizations.of(context)!;
 
-    showDialog(
+    showDialog<void>(
       context: context,
       barrierDismissible: false,
       barrierColor: Colors.black26,
@@ -319,74 +321,63 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
             borderRadius: BorderRadius.circular(20),
             side: BorderSide(color: Colors.green.withValues(alpha: .5)),
           ),
-          child: ConfettiWidget(
-            confettiController: confettiController,
-            numberOfParticles: 150,
-            gravity: 1,
-            blastDirectionality: BlastDirectionality.explosive,
-            maxBlastForce: 200,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(
-                    Icons.check_circle_rounded,
-                    size: 60,
-                    color: Colors.green,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.check_circle_rounded,
+                  size: 60,
+                  color: Colors.green,
+                ),
+                const Gutter(),
+                Text(
+                  l10n.paymentSuccessTitle,
+                  style: context.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
-                  const Gutter(),
-                  Text(
-                    'Paiement réussi !',
-                    style: context.textTheme.headlineSmall?.copyWith(
+                ),
+                const GutterSmall(),
+                Text(
+                  l10n.paymentSuccessBody,
+                  style: context.textTheme.bodyLarge?.copyWith(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: .5),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const Gutter.custom(size: 24),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(dialogContext).pop();
+                    Navigator.of(context).pop();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.green.shade600,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: Text(
+                    l10n.paymentSuccessContinue,
+                    style: const TextStyle(
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const GutterSmall(),
-                  Text(
-                    'Votre paiement a été effectué avec succès.',
-                    style: context.textTheme.bodyLarge?.copyWith(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withValues(alpha: .5),
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const Gutter.custom(size: 24),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Dismiss the WoltModalSheet by popping the navigator
-                      Navigator.of(dialogContext).pop();
-
-                      Navigator.of(context).pop();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.green.shade600,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 32,
-                        vertical: 12,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    child: const Text(
-                      'Continuer',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
       ),
-    ).then((_) {
-      confettiController.dispose();
-    });
+    );
   }
 }

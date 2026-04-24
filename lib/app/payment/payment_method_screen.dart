@@ -1,6 +1,7 @@
 import 'package:fgm_lyrics_app/app/payment/payment_provider.dart';
 import 'package:fgm_lyrics_app/core/widgets/app_default_spacing.dart';
 import 'package:fgm_lyrics_app/core/widgets/app_headline_text.dart';
+import 'package:fgm_lyrics_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,6 +18,7 @@ class PaymentMethodScreen extends ConsumerStatefulWidget {
 class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final paymentState = ref.watch(paymentProvider).requireValue;
     return SliverToBoxAdapter(
       child: AppDefaultSpacing(
@@ -24,7 +26,7 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
           children: [
             Image.asset('assets/payment_mean.png', height: 250),
             const Gutter(),
-            const AppHeadlineText(text: "Choisissez un moyen de paiement"),
+            AppHeadlineText(text: l10n.paymentMethodTitle),
 
             const Gutter(),
             ...paymentState.availableProviders.map((provider) {
@@ -59,7 +61,7 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                   ref.read(paymentProvider).requireValue.selectedGateway == null
                   ? null
                   : widget.onTap,
-              child: const Text('Continuer'),
+              child: Text(l10n.paymentMethodContinue),
             ),
           ],
         ),

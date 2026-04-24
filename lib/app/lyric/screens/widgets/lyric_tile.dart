@@ -32,10 +32,12 @@ class LyricTile extends ConsumerWidget {
         ),
         child: Row(
           children: [
-            Text("${lyric.id}. "),
+            if (lyric.displayNumber.isNotEmpty)
+              Text('${lyric.displayNumber}. '),
             Expanded(
               child: Text(
-                (lyric.songTitle).capitalize,
+                (lyric.songTitle.trim().isEmpty ? 'Untitled' : lyric.songTitle)
+                    .capitalize,
                 overflow: TextOverflow.ellipsis,
               ),
             ),

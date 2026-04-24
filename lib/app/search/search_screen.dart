@@ -4,6 +4,7 @@ import 'package:fgm_lyrics_app/app/lyric/screens/lyric_list_screen.dart';
 import 'package:fgm_lyrics_app/core/models/lyric.dart';
 import 'package:fgm_lyrics_app/core/utils/context_extension.dart';
 import 'package:fgm_lyrics_app/core/widgets/app_default_spacing.dart';
+import 'package:fgm_lyrics_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,8 +35,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     final query = _controller.text.toLowerCase();
     final isEnglish = ref.read(deviceLocaleProvider) == LanguageEnum.en.name;
     final allLyrics = isEnglish
-        ? ref.read(englishHymnProvider).requireValue
-        : ref.read(frenchHymnProvider).requireValue;
+        ? ref.read(englishHymnProvider).value ?? []
+        : ref.read(frenchHymnProvider).value ?? [];
     setState(() {
       _filteredLyrics = allLyrics
           .where((lyric) => lyric.songTitle.toLowerCase().contains(query))
@@ -52,6 +53,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final isEnglish = ref.watch(deviceLocaleProvider) == LanguageEnum.en.name;
     if (_controller.text.isEmpty) {
       _filteredLyrics =
@@ -64,7 +66,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
       appBar: AppBar(
         surfaceTintColor: Colors.transparent,
         automaticallyImplyLeading: false,
-        title: const Text('Search'),
+        title: Text(l10n.searchTitle),
         actions: [
           IconButton(
             onPressed: () => context.pop(),
@@ -76,7 +78,11 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         child: Column(
           children: [
             const GutterSmall(),
-            SearchInputField(controller: _controller, focusNode: _focusNode),
+            SearchInputField(
+              controller: _controller,
+              focusNode: _focusNode,
+              hintText: l10n.searchHint,
+            ),
             const Gutter(),
             Expanded(child: LyricListView(lyrics: _filteredLyrics)),
           ],
@@ -91,20 +97,22 @@ class SearchInputField extends StatelessWidget {
     super.key,
     required TextEditingController controller,
     required FocusNode focusNode,
+    required this.hintText,
   }) : _controller = controller,
        _focusNode = focusNode;
 
   final TextEditingController _controller;
   final FocusNode _focusNode;
+  final String hintText;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: _controller,
       focusNode: _focusNode,
-      decoration: const InputDecoration(
-        prefixIcon: Icon(Icons.search_rounded, color: Colors.grey),
-        hintText: 'Search hymns...',
+      decoration: InputDecoration(
+        prefixIcon: const Icon(Icons.search_rounded, color: Colors.grey),
+        hintText: hintText,
       ),
     );
   }
