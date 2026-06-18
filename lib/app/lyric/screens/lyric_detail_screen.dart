@@ -644,6 +644,7 @@ class _LyricDetailScreenState extends ConsumerState<LyricDetailScreen>
 
   Widget _buildLyricsContent() {
     final l10n = AppLocalizations.of(context)!;
+    final chorusPlain = widget.lyric.chorus.stripHtmlTags;
     return Container(
       key: const ValueKey('lyrics'),
       constraints: BoxConstraints(
@@ -670,7 +671,7 @@ class _LyricDetailScreenState extends ConsumerState<LyricDetailScreen>
             LyricItem(index: 1, verse: widget.lyric.enLyrics.first),
 
           // Chorus if exists
-          if (widget.lyric.chorus.isNotEmpty) ...[
+          if (chorusPlain.isNotEmpty) ...[
             const Gutter(),
             Text(
               l10n.chorusLabel,

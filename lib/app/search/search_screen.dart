@@ -95,11 +95,10 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 class SearchInputField extends StatelessWidget {
   const SearchInputField({
     super.key,
-    required TextEditingController controller,
-    required FocusNode focusNode,
+    required this._controller,
+    required this._focusNode,
     required this.hintText,
-  }) : _controller = controller,
-       _focusNode = focusNode;
+  });
 
   final TextEditingController _controller;
   final FocusNode _focusNode;
