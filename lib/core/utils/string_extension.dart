@@ -4,6 +4,26 @@ extension StringExtension on String {
   String get stripHtmlTags =>
       replaceAll(RegExp(r'<[^>]*>'), '').replaceAll('&nbsp;', ' ').trim();
 
+  /// Splits hymn text into display lines, treating HTML block/break tags as
+  /// newlines before stripping remaining markup.
+  List<String> get lyricLines {
+    final withBreaks = replaceAll(
+      RegExp(r'<br\s*/?>', caseSensitive: false),
+      '\n',
+    )
+        .replaceAll(RegExp(r'</p\s*>', caseSensitive: false), '\n')
+        .replaceAll(RegExp(r'<p[^>]*>', caseSensitive: false), '\n')
+        .replaceAll(RegExp(r'</div\s*>', caseSensitive: false), '\n')
+        .replaceAll(RegExp(r'<div[^>]*>', caseSensitive: false), '\n')
+        .replaceAll(RegExp(r'</li\s*>', caseSensitive: false), '\n');
+
+    return withBreaks.stripHtmlTags
+        .split(RegExp(r'\r?\n'))
+        .map((line) => line.trim())
+        .where((line) => line.isNotEmpty)
+        .toList();
+  }
+
   String get capitalizeWord {
     if (isEmpty) return this;
     return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";

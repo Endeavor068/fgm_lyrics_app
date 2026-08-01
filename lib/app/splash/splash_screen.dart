@@ -1,4 +1,5 @@
 import 'package:fgm_lyrics_app/app/lyric/screens/lyric_list_screen.dart';
+import 'package:fgm_lyrics_app/core/widgets/app_progress_indicator.dart';
 import 'package:fgm_lyrics_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -48,13 +49,11 @@ class _SplashScreenState extends State<SplashScreen> {
                 height: size.width * 0.6,
               ),
               const SizedBox(height: 24),
-              CircularProgressIndicator(
-                strokeCap: StrokeCap.round,
-                constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  Colors.red.withAlpha(200),
-                ),
-                strokeWidth: 3,
+              AppProgressIndicator(
+                size: 36,
+                strokeWidth: 3.25,
+                color: Colors.red.withAlpha(200),
+                trackColor: Colors.red.withAlpha(40),
               ),
               const Spacer(),
               Row(
@@ -64,11 +63,11 @@ class _SplashScreenState extends State<SplashScreen> {
                   Image.asset('assets/logo2.png', width: 20, height: 20),
                   Text(
                     l10n.splashOrganizationName,
-                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          color: Colors.blueGrey.shade700,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: GoogleFonts.roboto().fontFamily,
-                        ),
+                    style: GoogleFonts.fraunces(
+                      textStyle: Theme.of(context).textTheme.labelLarge,
+                      color: Colors.blueGrey.shade700,
+                      fontWeight: FontWeight.bold,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 ],

@@ -1,7 +1,7 @@
 import 'package:fgm_lyrics_app/app/locale/locale_provider.dart';
 import 'package:fgm_lyrics_app/app/locale/theme_provider.dart';
-import 'package:fgm_lyrics_app/app/settings/theme_seed_color_provider.dart';
 import 'package:fgm_lyrics_app/app/splash/splash_screen.dart';
+import 'package:fgm_lyrics_app/core/theme/app_theme_colors.dart';
 import 'package:fgm_lyrics_app/l10n/app_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -25,25 +25,22 @@ class HymnApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeProvider);
-    final seedIndex = ref.watch(themeSeedIndexProvider);
-    final seedColor =
-        kThemeSeedColors[seedIndex.clamp(0, kThemeSeedColors.length - 1)];
-    final lightScheme = ColorScheme.fromSeed(
-      seedColor: seedColor,
-      brightness: Brightness.light,
-    );
-    final darkScheme = ColorScheme.fromSeed(
-      seedColor: seedColor,
-      brightness: Brightness.dark,
-    );
+    final lightScheme = AppThemeColors.lightScheme();
+    final darkScheme = AppThemeColors.darkScheme();
 
-    // Safe font family with fallbacks
+    // App-wide UI font. Fraunces is applied explicitly where needed
+    // (hymn titles, verse/chorus body, number badges).
+    TextTheme lightTextTheme;
+    TextTheme darkTextTheme;
     String? fontFamily;
     try {
-      fontFamily = GoogleFonts.roboto().fontFamily;
+      fontFamily = GoogleFonts.inter().fontFamily;
+      lightTextTheme = GoogleFonts.interTextTheme(ThemeData.light().textTheme);
+      darkTextTheme = GoogleFonts.interTextTheme(ThemeData.dark().textTheme);
     } catch (e) {
-      // Fallback to system fonts if Google Fonts fails
-      fontFamily = null; // Will use default system font
+      fontFamily = null;
+      lightTextTheme = ThemeData.light().textTheme;
+      darkTextTheme = ThemeData.dark().textTheme;
     }
 
     return MaterialApp(
@@ -54,8 +51,13 @@ class HymnApp extends ConsumerWidget {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       theme: ThemeData(
         fontFamily: fontFamily,
+        textTheme: lightTextTheme.apply(
+          bodyColor: lightScheme.onSurface,
+          displayColor: lightScheme.onSurface,
+        ),
         brightness: Brightness.light,
         colorScheme: lightScheme,
+        scaffoldBackgroundColor: AppThemeColors.lightScaffold,
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -70,37 +72,39 @@ class HymnApp extends ConsumerWidget {
             minimumSize: const Size(double.infinity, 50),
           ),
         ),
-
         inputDecorationTheme: InputDecorationTheme(
           contentPadding: const EdgeInsets.symmetric(horizontal: 16),
           hintStyle: TextStyle(color: Colors.grey.withAlpha(400)),
-
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-
-            // borderSide: BorderSide(color: Colors.grey.withAlpha(20)),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
-            // borderSide: BorderSide(color: Colors.grey.withAlpha(20)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
-
-            borderSide: BorderSide(width: 1, color: lightScheme.secondary),
+            borderSide: BorderSide(width: 1, color: lightScheme.primary),
           ),
           fillColor: Colors.grey.withAlpha(15),
           filled: true,
         ),
+        progressIndicatorTheme: ProgressIndicatorThemeData(
+          color: lightScheme.primary,
+          circularTrackColor: lightScheme.primary.withValues(alpha: 0.14),
+          strokeWidth: 3.25,
+          strokeCap: StrokeCap.round,
+        ),
       ),
       darkTheme: ThemeData(
         fontFamily: fontFamily,
+        textTheme: darkTextTheme.apply(
+          bodyColor: darkScheme.onSurface,
+          displayColor: darkScheme.onSurface,
+        ),
         brightness: Brightness.dark,
         colorScheme: darkScheme,
+        scaffoldBackgroundColor: AppThemeColors.darkScaffold,
         inputDecorationTheme: InputDecorationTheme(
           contentPadding: const EdgeInsets.symmetric(horizontal: 16),
           hintStyle: TextStyle(color: Colors.grey.withAlpha(400)),
-
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
             borderSide: BorderSide(color: Colors.grey.withAlpha(20)),
@@ -111,7 +115,7 @@ class HymnApp extends ConsumerWidget {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(width: 1, color: darkScheme.secondary),
+            borderSide: BorderSide(width: 1, color: darkScheme.primary),
           ),
           fillColor: Colors.grey.withAlpha(15),
           filled: true,
@@ -130,11 +134,21 @@ class HymnApp extends ConsumerWidget {
             minimumSize: const Size(double.infinity, 50),
           ),
         ),
+        progressIndicatorTheme: ProgressIndicatorThemeData(
+          color: darkScheme.primary,
+          circularTrackColor: darkScheme.primary.withValues(alpha: 0.18),
+          strokeWidth: 3.25,
+          strokeCap: StrokeCap.round,
+        ),
       ),
       themeMode: themeMode,
       home: UpgradeAlert(
         navigatorKey: rootNavigatorKey,
-        upgrader: Upgrader(),
+        barrierDismissible: false,
+        showIgnore: false,
+        showLater: false,
+        shouldPopScope: () => false,
+        upgrader: Upgrader(durationUntilAlertAgain: Duration.zero),
         child: const SplashScreen(),
       ),
     );

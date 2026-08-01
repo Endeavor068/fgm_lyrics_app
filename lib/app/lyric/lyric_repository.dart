@@ -74,7 +74,7 @@ class LyricRepository {
                 HarmonyForgeHymn.fromJson(Map<String, dynamic>.from(e as Map)),
           )
           .toList();
-      return hymns.map((h) => Lyric.fromHarmonyForge(h, french)).toList();
+      return _project(hymns, french: french);
     } catch (_) {
       return null;
     }
@@ -93,7 +93,7 @@ class LyricRepository {
                 HarmonyForgeHymn.fromJson(Map<String, dynamic>.from(e as Map)),
           )
           .toList();
-      return hymns.map((h) => Lyric.fromHarmonyForge(h, french)).toList();
+      return _project(hymns, french: french);
     } catch (_) {
       return null;
     }
@@ -114,20 +114,28 @@ class LyricRepository {
     try {
       final hymns = await fetchFromFirestore();
       unawaited(_saveToCacheHymns(hymns));
-      return _sorted(
-        hymns.map((h) => Lyric.fromHarmonyForge(h, french)).toList(),
-      );
+      return _project(hymns, french: french);
     } catch (_) {
       final cached = await _loadFromCache(french: french);
-      if (cached != null && cached.isNotEmpty) return _sorted(cached);
+      if (cached != null && cached.isNotEmpty) return cached;
 
       final fromAsset = await _loadFromAssetHarmonyForge(french: french);
-      if (fromAsset != null && fromAsset.isNotEmpty) return _sorted(fromAsset);
+      if (fromAsset != null && fromAsset.isNotEmpty) return fromAsset;
 
       throw const LyricsUnavailableException(
         'Firestore unreachable, no local cache, and bundled asset failed.',
       );
     }
+  }
+
+  /// Projects hymns into one language and drops entries without real content.
+  List<Lyric> _project(List<HarmonyForgeHymn> hymns, {required bool french}) {
+    return _sorted(
+      hymns
+          .map((h) => Lyric.fromHarmonyForge(h, french))
+          .where((l) => french ? l.availableInFr : l.availableInEn)
+          .toList(),
+    );
   }
 
   /// Sorts [lyrics] ascending by [Lyric.songId].

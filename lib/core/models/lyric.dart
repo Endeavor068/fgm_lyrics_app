@@ -15,6 +15,8 @@ class Lyric {
     this.audioUrl = '',
     this.partitionUrl = '',
     this.contentLanguage = 'en',
+    this.availableInEn = false,
+    this.availableInFr = false,
   });
 
   final dynamic id;
@@ -35,45 +37,72 @@ class Lyric {
   /// cache file names.
   final String contentLanguage;
 
+  /// True when [HarmonyForgeHymn.content] has meaningful English text.
+  final bool availableInEn;
+
+  /// True when [HarmonyForgeHymn.content] has meaningful French text.
+  final bool availableInFr;
+
+  /// Whether [content] has a non-empty title or at least one non-empty verse.
+  static bool hasMeaningfulContent(HarmonyForgeContent? content) {
+    if (content == null) return false;
+    if (content.title.trim().isNotEmpty) return true;
+    return content.verses.any((line) => line.trim().isNotEmpty);
+  }
+
   /// Builds a [Lyric] from a HarmonyForge hymn and language.
+  ///
+  /// Title, verses, chorus, and metadata come from the **primary** language
+  /// only (no silent cross-language text fallback). Audio / partition URLs may
+  /// still fall back to the other language when the primary omits them.
   static Lyric fromHarmonyForge(HarmonyForgeHymn hymn, bool useFrench) {
     final primaryLang = useFrench ? 'fr' : 'en';
     final fallbackLang = useFrench ? 'en' : 'fr';
     final primary = hymn.content[primaryLang];
     final fallback = hymn.content[fallbackLang];
-    final c = primary ?? fallback;
-    if (c == null) {
-      return Lyric(id: hymn.id, contentLanguage: primaryLang);
+    final hasEn = hasMeaningfulContent(hymn.content['en']);
+    final hasFr = hasMeaningfulContent(hymn.content['fr']);
+
+    if (primary == null) {
+      return Lyric(
+        id: hymn.id,
+        contentLanguage: primaryLang,
+        availableInEn: hasEn,
+        availableInFr: hasFr,
+      );
     }
-    final mergedNumber = _firstNonEmpty(primary?.number, fallback?.number);
-    final mergedTitle = _firstNonEmpty(primary?.title, fallback?.title);
-    final mergedAuthor = _firstNonEmpty(primary?.author, fallback?.author);
-    final mergedYear = _firstNonEmpty(primary?.year, fallback?.year);
-    final mergedKey = _firstNonEmpty(primary?.key, fallback?.key);
-    final mergedChorus = _firstNonEmpty(primary?.chorus, fallback?.chorus);
-    final mergedVerses = _firstNonEmptyList(primary?.verses, fallback?.verses);
-    final mergedAudio = _firstNonEmpty(primary?.audioUrl, fallback?.audioUrl);
-    final mergedPartition = _firstNonEmpty(
-      primary?.partitionUrl,
+
+    final number = primary.number.trim();
+    final title = primary.title.trim();
+    final author = primary.author.trim();
+    final year = primary.year.trim();
+    final key = primary.key.trim();
+    final chorus = primary.chorus.trim();
+    final verses = primary.verses;
+    final audio = _firstNonEmpty(primary.audioUrl, fallback?.audioUrl);
+    final partition = _firstNonEmpty(
+      primary.partitionUrl,
       fallback?.partitionUrl,
     );
-    final parsedSongId = _parseInt(mergedNumber, 0);
+    final parsedSongId = _parseInt(number, 0);
     final titleFallback = parsedSongId > 0
         ? 'Hymn $parsedSongId'
-        : (mergedNumber.isNotEmpty ? 'Hymn $mergedNumber' : 'Untitled');
+        : (number.isNotEmpty ? 'Hymn $number' : 'Untitled');
 
     return Lyric(
       id: hymn.id,
-      songTitle: mergedTitle.isNotEmpty ? mergedTitle : titleFallback,
+      songTitle: title.isNotEmpty ? title : titleFallback,
       songId: parsedSongId,
-      chorus: mergedChorus,
-      key: mergedKey,
-      author: mergedAuthor,
-      year: mergedYear,
-      enLyrics: mergedVerses,
-      audioUrl: mergedAudio,
-      partitionUrl: mergedPartition,
+      chorus: chorus,
+      key: key,
+      author: author,
+      year: year,
+      enLyrics: verses,
+      audioUrl: audio,
+      partitionUrl: partition,
       contentLanguage: primaryLang,
+      availableInEn: hasEn,
+      availableInFr: hasFr,
     );
   }
 
@@ -89,6 +118,8 @@ class Lyric {
     String? audioUrl,
     String? partitionUrl,
     String? contentLanguage,
+    bool? availableInEn,
+    bool? availableInFr,
   }) {
     return Lyric(
       songTitle: songTitle ?? this.songTitle,
@@ -102,6 +133,8 @@ class Lyric {
       audioUrl: audioUrl ?? this.audioUrl,
       partitionUrl: partitionUrl ?? this.partitionUrl,
       contentLanguage: contentLanguage ?? this.contentLanguage,
+      availableInEn: availableInEn ?? this.availableInEn,
+      availableInFr: availableInFr ?? this.availableInFr,
     );
   }
 
@@ -135,7 +168,9 @@ class Lyric {
         other.author == author &&
         other.year == year &&
         listEquals(other.enLyrics, enLyrics) &&
-        other.contentLanguage == contentLanguage;
+        other.contentLanguage == contentLanguage &&
+        other.availableInEn == availableInEn &&
+        other.availableInFr == availableInFr;
   }
 
   @override
@@ -148,7 +183,9 @@ class Lyric {
         author.hashCode ^
         year.hashCode ^
         enLyrics.hashCode ^
-        contentLanguage.hashCode;
+        contentLanguage.hashCode ^
+        availableInEn.hashCode ^
+        availableInFr.hashCode;
   }
 
   /// Composition year for display.
@@ -170,20 +207,15 @@ class Lyric {
     return RegExp(r'^\d+$').hasMatch(idText) ? idText : '';
   }
 
+  /// Whether this hymn has a counterpart in the other language.
+  bool get hasOtherLanguage {
+    if (contentLanguage == 'fr') return availableInEn;
+    return availableInFr;
+  }
+
   static String _firstNonEmpty(String? first, String? second) {
     final firstValue = first?.trim() ?? '';
     if (firstValue.isNotEmpty) return firstValue;
     return second?.trim() ?? '';
-  }
-
-  static List<String> _firstNonEmptyList(
-    List<String>? first,
-    List<String>? second,
-  ) {
-    final firstList = first ?? const [];
-    if (firstList.any((line) => line.trim().isNotEmpty)) {
-      return firstList;
-    }
-    return second ?? const [];
   }
 }

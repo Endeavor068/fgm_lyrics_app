@@ -42,9 +42,10 @@ class FontSizeNotifier extends Notifier<double> {
 
 /// Curated set of fonts available for hymn text.
 enum HymnFontFamily {
+  fraunces('Fraunces'),
+  inter('Inter'),
   ebGaramond('EB Garamond'),
   lora('Lora'),
-  roboto('Roboto'),
   openSans('Open Sans'),
   notoSerif('Noto Serif');
 
@@ -59,6 +60,18 @@ enum HymnFontFamily {
     double height = 1.6,
     Color? color,
   }) => switch (this) {
+    HymnFontFamily.fraunces => GoogleFonts.fraunces(
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      height: height,
+      color: color,
+    ),
+    HymnFontFamily.inter => GoogleFonts.inter(
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      height: height,
+      color: color,
+    ),
     HymnFontFamily.ebGaramond => GoogleFonts.ebGaramond(
       fontSize: fontSize,
       fontWeight: fontWeight,
@@ -66,12 +79,6 @@ enum HymnFontFamily {
       color: color,
     ),
     HymnFontFamily.lora => GoogleFonts.lora(
-      fontSize: fontSize,
-      fontWeight: fontWeight,
-      height: height,
-      color: color,
-    ),
-    HymnFontFamily.roboto => GoogleFonts.roboto(
       fontSize: fontSize,
       fontWeight: fontWeight,
       height: height,
@@ -102,15 +109,20 @@ class FontFamilyNotifier extends Notifier<HymnFontFamily> {
   @override
   HymnFontFamily build() {
     _load();
-    return HymnFontFamily.ebGaramond;
+    return HymnFontFamily.fraunces;
   }
 
   Future<void> _load() async {
     final prefs = await SharedPreferences.getInstance();
     final saved = prefs.getString(_key);
+    if (saved == 'roboto') {
+      state = HymnFontFamily.inter;
+      await prefs.setString(_key, HymnFontFamily.inter.name);
+      return;
+    }
     state = HymnFontFamily.values.firstWhere(
       (f) => f.name == saved,
-      orElse: () => HymnFontFamily.ebGaramond,
+      orElse: () => HymnFontFamily.fraunces,
     );
   }
 

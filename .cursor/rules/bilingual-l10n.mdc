@@ -1,0 +1,14 @@
+---
+description: Always localize UI strings in both English and French
+alwaysApply: true
+---
+
+# Bilingual localization (EN + FR)
+
+Whenever you add or change any user-facing text in this app:
+
+1. Add/update the key in **both** `lib/l10n/app_en.arb` and `lib/l10n/app_fr.arb`.
+2. Never hardcode UI strings in Dart widgets — use `AppLocalizations.of(context)!`.
+3. After editing `.arb` files, run `flutter gen-l10n` so generated files stay in sync.
+4. Keep EN and FR key sets identical (same keys, same placeholders).
+5. Prefer clear natural translations (not literal word-for-word) for French.

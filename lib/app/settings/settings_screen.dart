@@ -2,15 +2,22 @@ import 'package:fgm_lyrics_app/app/harmonyforge/harmonyforge_media_service.dart'
 import 'package:fgm_lyrics_app/app/locale/theme_provider.dart';
 import 'package:fgm_lyrics_app/app/lyric/lyric_controller.dart';
 import 'package:fgm_lyrics_app/app/lyric/lyric_repository.dart';
-import 'package:fgm_lyrics_app/app/settings/theme_seed_color_provider.dart';
 import 'package:fgm_lyrics_app/app/settings/typography_settings_provider.dart';
+import 'package:fgm_lyrics_app/core/utils/app_links.dart';
+import 'package:fgm_lyrics_app/core/widgets/app_progress_indicator.dart';
 import 'package:fgm_lyrics_app/core/widgets/hymn_text_display.dart';
+import 'package:fgm_lyrics_app/core/widgets/scroll_hide_chrome.dart';
 import 'package:fgm_lyrics_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
-  const SettingsScreen({super.key});
+  const SettingsScreen({super.key, this.chromeVisible = true});
+
+  /// When false, the app bar collapses (scroll-hide chrome from parent shell).
+  final bool chromeVisible;
 
   @override
   ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
@@ -73,6 +80,22 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
   }
 
+  Future<void> _openPrivacyPolicy() async {
+    final l10n = AppLocalizations.of(context)!;
+    final uri = Uri.parse(AppLinks.privacyPolicy);
+    try {
+      final launched = await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
+      if (!launched && mounted) {
+        _showSnackBar(l10n.privacyPolicyOpenFailed);
+      }
+    } catch (_) {
+      if (mounted) _showSnackBar(l10n.privacyPolicyOpenFailed);
+    }
+  }
+
   // ── Helpers ───────────────────────────────────────────────────────────────
 
   void _showSnackBar(String message) {
@@ -121,40 +144,79 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final l10n = AppLocalizations.of(context)!;
     final busy = _isRefreshing || _isClearing;
 
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.settingsTitle), centerTitle: false),
-      body: AbsorbPointer(
-        absorbing: busy,
-        child: ListView(
-          children: [
-            _SectionHeader(label: l10n.appearanceSection),
-            const _ThemeTile(),
-            const Divider(height: 1, indent: 16),
-            const _AccentColorTile(),
-            const Divider(height: 1, indent: 16),
-            const _FontSizeTile(),
-            const Divider(height: 1, indent: 16),
-            const _FontFamilyTile(),
-            _SectionHeader(label: l10n.dataSection),
-            _SettingsTile(
-              icon: Icons.sync_rounded,
-              title: l10n.refreshHymnsTitle,
-              subtitle: l10n.refreshHymnsSubtitle,
-              loading: _isRefreshing,
-              onTap: _refreshFromServer,
+    return Material(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          ScrollHideChrome(
+            visible: widget.chromeVisible,
+            child: Material(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              child: SafeArea(
+                bottom: false,
+                child: SizedBox(
+                  height: kToolbarHeight,
+                  child: NavigationToolbar(
+                    centerMiddle: false,
+                    middle: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 16),
+                        child: Text(
+                          l10n.settingsTitle,
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
-            const Divider(height: 1, indent: 56),
-            _SettingsTile(
-              icon: Icons.delete_sweep_rounded,
-              iconColor: Theme.of(context).colorScheme.error,
-              title: l10n.clearDataTitle,
-              subtitle: l10n.clearDataSubtitle,
-              loading: _isClearing,
-              onTap: _clearAllDownloadedData,
-              titleColor: Theme.of(context).colorScheme.error,
+          ),
+          Expanded(
+            child: AbsorbPointer(
+              absorbing: busy,
+              child: ListView(
+                padding: const EdgeInsets.only(bottom: 72),
+                children: [
+                  _SectionHeader(label: l10n.appearanceSection),
+                  const _ThemeTile(),
+                  const Divider(height: 1, indent: 16),
+                  const _FontSizeTile(),
+                  const Divider(height: 1, indent: 16),
+                  const _FontFamilyTile(),
+                  _SectionHeader(label: l10n.dataSection),
+                  _SettingsTile(
+                    icon: LucideIcons.refreshCw,
+                    title: l10n.refreshHymnsTitle,
+                    subtitle: l10n.refreshHymnsSubtitle,
+                    loading: _isRefreshing,
+                    onTap: _refreshFromServer,
+                  ),
+                  const Divider(height: 1, indent: 56),
+                  _SettingsTile(
+                    icon: LucideIcons.trash2,
+                    iconColor: Theme.of(context).colorScheme.error,
+                    title: l10n.clearDataTitle,
+                    subtitle: l10n.clearDataSubtitle,
+                    loading: _isClearing,
+                    onTap: _clearAllDownloadedData,
+                    titleColor: Theme.of(context).colorScheme.error,
+                  ),
+                  _SectionHeader(label: l10n.legalSection),
+                  _SettingsTile(
+                    icon: LucideIcons.shieldCheck,
+                    title: l10n.privacyPolicyTitle,
+                    subtitle: l10n.privacyPolicySubtitle,
+                    onTap: _openPrivacyPolicy,
+                    trailing: const Icon(LucideIcons.externalLink, size: 20),
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -174,7 +236,7 @@ class _ThemeTile extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
-          const Icon(Icons.brightness_6_rounded),
+          const Icon(LucideIcons.sunMoon),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -188,20 +250,21 @@ class _ThemeTile extends ConsumerWidget {
                 ),
                 const SizedBox(height: 8),
                 SegmentedButton<ThemeMode>(
+                  showSelectedIcon: false,
                   segments: [
                     ButtonSegment(
                       value: ThemeMode.light,
-                      icon: const Icon(Icons.light_mode_rounded),
+                      icon: const Icon(LucideIcons.sun),
                       label: Text(l10n.themeLight),
                     ),
                     ButtonSegment(
                       value: ThemeMode.system,
-                      icon: const Icon(Icons.brightness_auto_rounded),
+                      icon: const Icon(LucideIcons.sunMoon),
                       label: Text(l10n.themeSystem),
                     ),
                     ButtonSegment(
                       value: ThemeMode.dark,
-                      icon: const Icon(Icons.dark_mode_rounded),
+                      icon: const Icon(LucideIcons.moon),
                       label: Text(l10n.themeDark),
                     ),
                   ],
@@ -211,94 +274,6 @@ class _ThemeTile extends ConsumerWidget {
                   style: const ButtonStyle(
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Preset seed colors for [ColorScheme.fromSeed] (persists with
-/// [themeSeedIndexProvider]).
-class _AccentColorTile extends ConsumerWidget {
-  const _AccentColorTile();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
-    final selected = ref.watch(themeSeedIndexProvider);
-    final scheme = Theme.of(context).colorScheme;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(Icons.palette_rounded),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l10n.accentColorTitle,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  l10n.accentColorSubtitle,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: scheme.onSurface.withValues(alpha: 0.65),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
-                  children: List.generate(kThemeSeedColors.length, (i) {
-                    final c = kThemeSeedColors[i];
-                    final isSel = i == selected;
-                    return Semantics(
-                      button: true,
-                      selected: isSel,
-                      label: '${l10n.accentColorTitle} ${i + 1}',
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: () => ref
-                              .read(themeSeedIndexProvider.notifier)
-                              .setIndex(i),
-                          customBorder: const CircleBorder(),
-                          child: Ink(
-                            width: 36,
-                            height: 36,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: c,
-                              border: Border.all(
-                                color: isSel
-                                    ? scheme.primary
-                                    : scheme.outline.withValues(alpha: 0.5),
-                                width: isSel ? 3 : 1,
-                              ),
-                              boxShadow: [
-                                if (isSel)
-                                  BoxShadow(
-                                    color: c.withValues(alpha: 0.45),
-                                    blurRadius: 8,
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  }),
                 ),
               ],
             ),
@@ -323,7 +298,7 @@ class _FontSizeTile extends ConsumerWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.format_size_rounded),
+          const Icon(LucideIcons.aLargeSmall),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -392,7 +367,7 @@ class _FontFamilyTile extends ConsumerWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.font_download_rounded),
+          const Icon(LucideIcons.type),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -411,6 +386,7 @@ class _FontFamilyTile extends ConsumerWidget {
                   children: HymnFontFamily.values.map((family) {
                     final selected = family == current;
                     return ChoiceChip(
+                      showCheckmark: false,
                       label: Text(
                         family.displayName,
                         style: family.textStyle(fontSize: 13),
@@ -463,6 +439,7 @@ class _SettingsTile extends StatelessWidget {
     this.iconColor,
     this.titleColor,
     this.loading = false,
+    this.trailing,
   });
 
   final IconData icon;
@@ -472,18 +449,16 @@ class _SettingsTile extends StatelessWidget {
   final Color? iconColor;
   final Color? titleColor;
   final bool loading;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       leading: loading
-          ? SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: iconColor ?? Theme.of(context).colorScheme.primary,
-              ),
+          ? AppProgressIndicator(
+              size: 24,
+              strokeWidth: 2.4,
+              color: iconColor ?? Theme.of(context).colorScheme.primary,
             )
           : Icon(icon, color: iconColor),
       title: Text(
@@ -499,6 +474,7 @@ class _SettingsTile extends StatelessWidget {
           color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
         ),
       ),
+      trailing: trailing,
       onTap: loading ? null : onTap,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
     );

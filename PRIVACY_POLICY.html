@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>PRIVACY_POLICY.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> or <div class="page"></div> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="privacy-policy--fgm-hymnals---official---mm">Privacy Policy — FGM Hymnals - Official - MM</h1>
+<p><strong>Effective date:</strong> July 17, 2026<br>
+<strong>Last updated:</strong> August 1, 2026</p>
+<hr>
+<h2 id="1-introduction">1. Introduction</h2>
+<p>Full Gospel Mission (“<strong>we</strong>,” “<strong>us</strong>,” or “<strong>our</strong>”) operates <strong>FGM Hymnals - Official - MM</strong> (the “<strong>App</strong>”), a mobile application that lets you browse hymn lyrics, sheet music, and audio recordings published by Full Gospel Mission.</p>
+<p>This Privacy Policy explains what information is processed when you use the App, how we use it, who we share it with, and what choices you have. It applies to the App on Android, iOS, and other platforms where the App is distributed.</p>
+<p>By using the App, you agree to the practices described in this policy. If you do not agree, please do not use the App.</p>
+<hr>
+<h2 id="2-who-is-responsible-for-your-data">2. Who Is Responsible for Your Data</h2>
+<p><strong>Data controller:</strong><br>
+Full Gospel Mission<br>
+Bepanda Casmando<br>
+Bepanda 00000<br>
+Douala, Cameroon</p>
+<p><strong>Privacy contact:</strong><br>
+Email: appsindustry068@gmail.com</p>
+<p>For users in the European Economic Area (EEA), United Kingdom, or Switzerland, Full Gospel Mission is the controller of personal data described in this policy.</p>
+<hr>
+<h2 id="3-summary">3. Summary</h2>
+<table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>What the App does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>User accounts</td>
+<td><strong>No.</strong> The App does not require registration or login.</td>
+</tr>
+<tr>
+<td>Advertising</td>
+<td><strong>No.</strong> We do not show ads and do not use advertising identifiers.</td>
+</tr>
+<tr>
+<td>Analytics</td>
+<td><strong>No dedicated analytics SDK.</strong> We do not use Google Analytics or similar in-app analytics tools.</td>
+</tr>
+<tr>
+<td>Device identifiers</td>
+<td><strong>Via Firebase only</strong> — installation/device IDs may be processed by Google to operate Firebase services.</td>
+</tr>
+<tr>
+<td>Location</td>
+<td><strong>No.</strong> We do not collect GPS or precise location.</td>
+</tr>
+<tr>
+<td>Camera / microphone / contacts</td>
+<td><strong>No.</strong> These are not accessed.</td>
+</tr>
+<tr>
+<td>Favorites &amp; settings</td>
+<td>Stored <strong>locally on your device</strong> only.</td>
+</tr>
+<tr>
+<td>Hymn catalog</td>
+<td>Downloaded from <strong>Google Firebase (Firestore)</strong>.</td>
+</tr>
+<tr>
+<td>Audio &amp; sheet music</td>
+<td>Downloaded from <strong>Firebase Storage</strong> when you request them.</td>
+</tr>
+<tr>
+<td>Sharing lyrics</td>
+<td>Uses your device’s <strong>system share sheet</strong>; we do not receive shared content.</td>
+</tr>
+<tr>
+<td>Payments (if enabled)</td>
+<td>Processed by <strong>Google Play Billing</strong> (Android) or <strong>Apple In-App Purchase</strong> (iOS); we do not collect or store payment card details.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="4-information-we-collect">4. Information We Collect</h2>
+<p>We collect only the information needed to provide App features. We do <strong>not</strong> sell your personal information.</p>
+<h3 id="41-information-stored-locally-on-your-device">4.1 Information stored locally on your device</h3>
+<p>The following data stays on your device unless you delete the App or clear it through App settings:</p>
+<table>
+<thead>
+<tr>
+<th>Data</th>
+<th>Purpose</th>
+<th>Storage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Favorite hymns</strong></td>
+<td>Save hymns you mark as favorites</td>
+<td>On your device only</td>
+</tr>
+<tr>
+<td><strong>Theme preference</strong></td>
+<td>Light, dark, or system theme</td>
+<td>On your device only</td>
+</tr>
+<tr>
+<td><strong>Accent color</strong></td>
+<td>UI color choice</td>
+<td>On your device only</td>
+</tr>
+<tr>
+<td><strong>Font size &amp; font family</strong></td>
+<td>Hymn text display preferences</td>
+<td>On your device only</td>
+</tr>
+<tr>
+<td><strong>Cached hymn catalog</strong></td>
+<td>Offline access to hymn metadata</td>
+<td>On your device only</td>
+</tr>
+<tr>
+<td><strong>Downloaded audio files</strong></td>
+<td>Play hymns offline</td>
+<td>On your device only</td>
+</tr>
+<tr>
+<td><strong>Downloaded sheet music</strong></td>
+<td>View partitions offline</td>
+<td>On your device only</td>
+</tr>
+<tr>
+<td><strong>Purchase unlock status</strong></td>
+<td>Remember that full access was purchased</td>
+<td>On your device only</td>
+</tr>
+</tbody>
+</table>
+<p>This data is <strong>not uploaded to our servers</strong> and is <strong>not linked to your identity</strong> because the App has no user accounts.</p>
+<p>You can delete downloaded audio, partitions, and the hymn cache at any time in <strong>Settings → Clear downloaded data</strong>. Favorites and appearance settings are removed when you uninstall the App or clear app data at the OS level.</p>
+<h3 id="42-information-processed-when-you-use-app-features">4.2 Information processed when you use App features</h3>
+<table>
+<thead>
+<tr>
+<th>Activity</th>
+<th>Data involved</th>
+<th>Sent to us?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Browse / search hymns</strong></td>
+<td>Search terms are processed in memory on your device only</td>
+<td>No</td>
+</tr>
+<tr>
+<td><strong>Refresh hymn catalog</strong></td>
+<td>App requests hymn documents from Firestore</td>
+<td>Read-only; no user identifier attached by our code</td>
+</tr>
+<tr>
+<td><strong>Download audio or sheet music</strong></td>
+<td>HTTP request to Firebase Storage URL for the selected hymn</td>
+<td>Request goes to Google/Firebase; we do not log your identity</td>
+</tr>
+<tr>
+<td><strong>Share a hymn</strong></td>
+<td>Hymn title, number, and lyrics text you choose to share</td>
+<td>No — sharing goes directly through your OS to the app you select (e.g. WhatsApp, Mail)</td>
+</tr>
+<tr>
+<td><strong>Check for App updates</strong></td>
+<td>App version and platform info</td>
+<td>Sent to Apple App Store / Google Play via the Upgrader library to compare versions</td>
+</tr>
+<tr>
+<td><strong>Load fonts</strong></td>
+<td>Font files requested from Google Fonts</td>
+<td>Request goes to Google’s CDN</td>
+</tr>
+<tr>
+<td><strong>Purchase full access</strong></td>
+<td>In-app purchase handled by Google Play or Apple</td>
+<td>Payment and purchase history processed by the store; we receive only purchase confirmation through the billing SDK</td>
+</tr>
+<tr>
+<td><strong>Restore purchases</strong></td>
+<td>Re-validate prior store purchases</td>
+<td>Request sent to Google Play or Apple; we do not receive your payment credentials</td>
+</tr>
+</tbody>
+</table>
+<h3 id="43-in-app-purchases-only-if-you-use-paid-features">4.3 In-app purchases (only if you use paid features)</h3>
+<p>If you purchase full access to the App, payment is processed entirely by:</p>
+<ul>
+<li><strong>Google Play Billing</strong> on Android, or</li>
+<li><strong>Apple In-App Purchase</strong> on iOS</li>
+</ul>
+<p>We do <strong>not</strong> collect, receive, or store your credit card number, bank account details, or mobile-money credentials. Google or Apple processes payment information according to their own privacy policies and terms.</p>
+<p>The App receives from the store only what is needed to unlock features, such as:</p>
+<ul>
+<li>Which product was purchased</li>
+<li>Purchase / entitlement status</li>
+<li>Transaction references provided by the billing platform</li>
+</ul>
+<p>We store a <strong>local unlock flag</strong> on your device after a successful purchase so the App can grant access offline. You can use <strong>Restore purchases</strong> to recover access on a new device signed into the same store account.</p>
+<blockquote>
+<p><strong>Note:</strong> Paid features may not be enabled in all App versions or regions. This section applies whenever in-app purchase functionality is available.</p>
+</blockquote>
+<h3 id="44-information-we-do-not-collect">4.4 Information we do <strong>not</strong> collect</h3>
+<p>We do <strong>not</strong> intentionally collect:</p>
+<ul>
+<li>Email addresses or passwords for user accounts (no accounts exist)</li>
+<li>Precise or approximate location</li>
+<li>Contacts, photos, calendar, or files outside the App’s download folder</li>
+<li>Health, biometric, or government ID data</li>
+<li>Advertising or cross-app tracking identifiers</li>
+<li>Cookies (this is a native mobile app, not a website)</li>
+</ul>
+<h3 id="45-information-collected-automatically-by-third-party-sdks">4.5 Information collected automatically by third-party SDKs</h3>
+<p>We use <strong>Firebase Core</strong> and <strong>Cloud Firestore</strong>. When the App connects to Firebase, Google may automatically process certain technical information needed to operate the service, which can include:</p>
+<ul>
+<li><strong>Device or installation identifiers</strong> (such as Firebase installation IDs or app instance IDs)</li>
+<li><strong>IP address</strong> and general connection metadata</li>
+<li><strong>Diagnostic and performance data</strong> related to SDK operation</li>
+</ul>
+<p>We do not use Firebase to build user profiles or to track you across other apps or websites. Firebase Analytics is <strong>not enabled</strong> in our App. We do not integrate Google Analytics, Firebase Crashlytics, or advertising SDKs.</p>
+<p>For more information, see <a href="https://policies.google.com/privacy">Google’s Privacy Policy</a> and <a href="https://firebase.google.com/support/privacy">Firebase privacy documentation</a>.</p>
+<hr>
+<h2 id="5-how-we-use-information">5. How We Use Information</h2>
+<p>We use information only to:</p>
+<ol>
+<li><strong>Provide core features</strong> — display hymns, favorites, audio player, sheet music viewer, search, and settings</li>
+<li><strong>Sync content</strong> — fetch the latest hymn catalog and media from Firebase</li>
+<li><strong>Improve reliability</strong> — cache content locally for offline use</li>
+<li><strong>Verify in-app purchases</strong> — when you buy or restore full access through Google Play or Apple</li>
+<li><strong>Prompt App updates</strong> — compare your version with the store listing</li>
+<li><strong>Comply with law</strong> — respond to valid legal requests when required</li>
+</ol>
+<p>We do <strong>not</strong> use your data for targeted advertising, profiling, or automated decision-making that affects your legal rights.</p>
+<hr>
+<h2 id="6-legal-bases-for-processing-eea--uk-users">6. Legal Bases for Processing (EEA / UK users)</h2>
+<p>Where GDPR or UK GDPR applies, we rely on:</p>
+<table>
+<thead>
+<tr>
+<th>Processing</th>
+<th>Legal basis</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Providing App functionality (catalog, downloads, favorites, settings)</td>
+<td><strong>Performance of a contract</strong> / <strong>legitimate interests</strong> (operating the App you requested)</td>
+</tr>
+<tr>
+<td>Optional in-app purchases</td>
+<td><strong>Performance of a contract</strong> (when you initiate a purchase through the store)</td>
+</tr>
+<tr>
+<td>Firebase technical/diagnostic data</td>
+<td><strong>Legitimate interests</strong> (security, stability) and <strong>Google’s role as processor/provider</strong></td>
+</tr>
+<tr>
+<td>Legal compliance</td>
+<td><strong>Legal obligation</strong></td>
+</tr>
+</tbody>
+</table>
+<p>You may withdraw consent for optional processing (e.g. payments) by not using that feature.</p>
+<hr>
+<h2 id="7-how-we-share-information">7. How We Share Information</h2>
+<p>We do <strong>not sell</strong> or <strong>rent</strong> your personal information.</p>
+<p>We share data only with the service providers below, strictly to operate the App:</p>
+<table>
+<thead>
+<tr>
+<th>Recipient</th>
+<th>Role</th>
+<th>Data shared</th>
+<th>Privacy policy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Google Firebase / Google Cloud</strong></td>
+<td>Hymn catalog (Firestore), media hosting (Storage), SDK infrastructure</td>
+<td>Network requests; device/installation identifiers and other technical data as described by Google</td>
+<td><a href="https://policies.google.com/privacy">Google Privacy Policy</a></td>
+</tr>
+<tr>
+<td><strong>Google Fonts</strong></td>
+<td>Typography</td>
+<td>IP address, font requests</td>
+<td><a href="https://policies.google.com/privacy">Google Privacy Policy</a></td>
+</tr>
+<tr>
+<td><strong>Google Play Billing / Apple In-App Purchase</strong></td>
+<td>Process in-app purchases and restore entitlements (if used)</td>
+<td>Purchase status, product ID, transaction metadata handled by the store billing system</td>
+<td><a href="https://policies.google.com/privacy">Google Play</a> / <a href="https://www.apple.com/legal/privacy/">Apple</a></td>
+</tr>
+<tr>
+<td><strong>Apple App Store / Google Play</strong></td>
+<td>App distribution and update checks</td>
+<td>Standard store metadata via Upgrader</td>
+<td><a href="https://www.apple.com/legal/privacy/">Apple</a> / <a href="https://policies.google.com/privacy">Google Play</a></td>
+</tr>
+</tbody>
+</table>
+<p>We may also disclose information if required by law, court order, or to protect the rights, safety, and security of Full Gospel Mission, our users, or the public.</p>
+<p>If Full Gospel Mission is involved in a merger, acquisition, or asset sale, user information may be transferred subject to this policy.</p>
+<hr>
+<h2 id="8-international-data-transfers">8. International Data Transfers</h2>
+<p>Firebase, Google Play, and Apple services may process data on servers located outside your country, including the United States. Where required, those providers offer appropriate safeguards (such as Standard Contractual Clauses) for international transfers.</p>
+<hr>
+<h2 id="9-data-retention">9. Data Retention</h2>
+<table>
+<thead>
+<tr>
+<th>Data type</th>
+<th>Retention</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Local favorites &amp; settings</td>
+<td>Until you change them, clear app data, or uninstall the App</td>
+</tr>
+<tr>
+<td>Downloaded media &amp; hymn cache</td>
+<td>Until you use <strong>Clear downloaded data</strong> or uninstall</td>
+</tr>
+<tr>
+<td>Firestore hymn catalog</td>
+<td>Stored on Google Firebase per our content management practices; not tied to individual users</td>
+</tr>
+<tr>
+<td>In-app purchase records at Google / Apple</td>
+<td>Governed by Google Play or Apple retention policies</td>
+</tr>
+<tr>
+<td>Support emails (if you contact us)</td>
+<td>Up to <strong>24 months</strong> after your request is resolved, unless law requires longer</td>
+</tr>
+</tbody>
+</table>
+<p>We do not maintain user account profiles because the App has no login system.</p>
+<hr>
+<h2 id="10-security">10. Security</h2>
+<p>We take reasonable measures to protect information, including:</p>
+<ul>
+<li><strong>HTTPS/TLS</strong> for network communication with Firebase, Google Play, Apple, and Google services</li>
+<li><strong>Read-only</strong> access to Firestore from the App (no user writes to our database)</li>
+<li><strong>On-device storage</strong> for personal preferences, not on our own backend</li>
+</ul>
+<p>No method of transmission or storage is 100% secure. You use the App at your own risk.</p>
+<hr>
+<h2 id="11-device-permissions">11. Device Permissions</h2>
+<p>The App requires <strong>Internet access</strong> to sync hymns, download media, and connect to Firebase and store services.</p>
+<p>On <strong>Android</strong>, when in-app purchases are enabled, the App uses <strong>Google Play Billing</strong>. The billing permission is included automatically by Google’s billing library and is used only to process and restore purchases through Google Play.</p>
+<p>We do <strong>not</strong> request permissions for location, camera, microphone, contacts, photo library, or notifications in the current App version.</p>
+<p>When you share hymn text, you choose the destination app; we do not control third-party apps you share to.</p>
+<hr>
+<h2 id="12-your-choices-and-rights">12. Your Choices and Rights</h2>
+<h3 id="121-in-the-app">12.1 In the App</h3>
+<ul>
+<li><strong>Remove favorites</strong> — unfavorite any hymn</li>
+<li><strong>Clear downloads</strong> — Settings → Clear downloaded data</li>
+<li><strong>Reset preferences</strong> — uninstall the App or clear app storage in device settings</li>
+<li><strong>Restore purchases</strong> — recover a prior store purchase on a new device</li>
+<li><strong>Stop sharing</strong> — simply do not use the share button</li>
+</ul>
+<p>Purchase history and refunds are managed by <strong>Google Play</strong> or <strong>Apple</strong> according to their policies.</p>
+<h3 id="122-request-data-deletion">12.2 Request data deletion</h3>
+<p>Because the App does not use user accounts, most of your data is stored <strong>only on your device</strong> and can be removed without contacting us:</p>
+<ol>
+<li><strong>In the App:</strong> Settings → <strong>Clear downloaded data</strong> (removes cached hymns, audio, and sheet music)</li>
+<li><strong>On your device:</strong> uninstall the App or clear app storage in your phone’s system settings (removes favorites, preferences, and local unlock status)</li>
+</ol>
+<p>If you have contacted us by email and want any correspondence or other data we hold deleted, email us at:</p>
+<p><strong>appsindustry068@gmail.com</strong></p>
+<p>Use the subject line: <strong>Data deletion request</strong></p>
+<p>Please include:</p>
+<ul>
+<li>The app name (<strong>FGM Hymnals - Official - MM</strong>)</li>
+<li>A brief description of what you want deleted</li>
+<li>The email address you used to contact us (if applicable)</li>
+</ul>
+<p>We will confirm receipt and respond within <strong>30 days</strong>. Purchase records held by Google Play or Apple must be requested through those platforms according to their policies.</p>
+<p>You can also read this policy online at <strong>https://sites.google.com/view/fgmn-hymnal-privacy-policy</strong> or in the App: <strong>Settings → Legal → Privacy Policy</strong>.</p>
+<h3 id="123-privacy-rights-eea--uk--switzerland--gdpr">12.3 Privacy rights (EEA / UK / Switzerland — GDPR)</h3>
+<p>You have the right to:</p>
+<ul>
+<li><strong>Access</strong> personal data we hold about you</li>
+<li><strong>Rectify</strong> inaccurate data</li>
+<li><strong>Erase</strong> data (“right to be forgotten”)</li>
+<li><strong>Restrict</strong> processing in certain cases</li>
+<li><strong>Data portability</strong> where applicable</li>
+<li><strong>Object</strong> to processing based on legitimate interests</li>
+<li><strong>Lodge a complaint</strong> with your local supervisory authority</li>
+</ul>
+<p>Because most data is stored only on your device, you can often exercise these rights directly by clearing App data or uninstalling. For requests involving data processed by us or our processors, email <strong>appsindustry068@gmail.com</strong>.</p>
+<h3 id="124-california-residents-ccpa--cpra">12.4 California residents (CCPA / CPRA)</h3>
+<p>We do <strong>not sell</strong> or <strong>share</strong> personal information for cross-context behavioral advertising.</p>
+<p>California residents may request:</p>
+<ul>
+<li><strong>Access</strong> to personal information collected</li>
+<li><strong>Deletion</strong> of personal information</li>
+<li><strong>Correction</strong> of inaccurate information</li>
+<li><strong>Non-discrimination</strong> for exercising privacy rights</li>
+</ul>
+<p>To submit a request: <strong>appsindustry068@gmail.com</strong>. We will verify and respond within the timeframes required by law.</p>
+<h3 id="125-other-regions">12.5 Other regions</h3>
+<p>We respect applicable privacy laws in your jurisdiction. Contact us to exercise rights available under local law.</p>
+<hr>
+<h2 id="13-childrens-privacy">13. Children’s Privacy</h2>
+<p>The App is a general hymnals application and is <strong>not directed at children under 13</strong> (or the applicable age of digital consent in your country, e.g. <strong>16</strong> in some EU member states).</p>
+<p>We do <strong>not</strong> knowingly collect personal information from children. If you believe a child has provided personal information through payment or support channels, contact us at <strong>appsindustry068@gmail.com</strong> and we will take steps to delete it.</p>
+<p>Parents and guardians should supervise children’s use of the App and any sharing or payment features.</p>
+<hr>
+<h2 id="14-third-party-links-and-services">14. Third-Party Links and Services</h2>
+<p>The App may open downloaded files in external viewers (PDF/image/audio apps) via the operating system. Those apps have their own privacy policies.</p>
+<p>Media files may be loaded from Firebase Storage. In-app purchases are handled by Google Play or Apple. We are not responsible for third-party services you choose to use outside the App.</p>
+<hr>
+<h2 id="15-changes-to-this-policy">15. Changes to This Policy</h2>
+<p>We may update this Privacy Policy from time to time. When we do, we will revise the <strong>“Last updated”</strong> date at the top. Material changes may also be communicated in the App or on our website.</p>
+<p>Continued use of the App after an update means you accept the revised policy.</p>
+<hr>
+<h2 id="16-contact-us">16. Contact Us</h2>
+<p>For privacy questions, requests, or complaints:</p>
+<p><strong>Full Gospel Mission</strong><br>
+Email: <strong>appsindustry068@gmail.com</strong><br>
+Address: <strong>Bepanda Casmando, Bepanda 00000, Douala, Cameroon</strong><br>
+Organization website: <strong>https://fullgospel-mission.org/</strong><br>
+Privacy policy: <strong>https://sites.google.com/view/fgmn-hymnal-privacy-policy</strong></p>
+<p>We aim to respond within <strong>30 days</strong>.</p>
+<hr>
+<h2 id="17-app-store-data-safety-summary-reference">17. App Store Data Safety Summary (Reference)</h2>
+<p>For Google Play and Apple App Store “Data safety” / “Privacy Nutrition Label” declarations, the App generally:</p>
+<table>
+<thead>
+<tr>
+<th>Declares</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Data collected</strong></td>
+<td>Purchase history processed by Google Play or Apple when you buy in-app; device/installation identifiers and diagnostic data via Firebase per Google</td>
+</tr>
+<tr>
+<td><strong>Data not collected</strong></td>
+<td>Payment card numbers, bank accounts, mobile-money numbers, location, contacts, photos, audio recordings from mic — not collected by us</td>
+</tr>
+<tr>
+<td><strong>Data shared</strong></td>
+<td>Purchase validation with Google Play / Apple; technical and identifier data with Google/Firebase as described above</td>
+</tr>
+<tr>
+<td><strong>Encryption in transit</strong></td>
+<td>Yes (HTTPS)</td>
+</tr>
+<tr>
+<td><strong>User can request deletion</strong></td>
+<td>Yes — in-app (Settings → Clear downloaded data), device settings, or email <strong>appsindustry068@gmail.com</strong> with subject <strong>Data deletion request</strong></td>
+</tr>
+<tr>
+<td><strong>Independent security review</strong></td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+<p>Adjust store declarations if payment features are disabled in a given release.</p>
+<hr>
+<p><em>© Full Gospel Mission. All rights reserved.</em></p>
+<hr>
+<hr>
+<h1 id="politique-de-confidentialité--mpe-cantiques---officiel---mm">Politique de confidentialité — MPE Cantiques - Officiel - MM</h1>
+<p><strong>Date d’entrée en vigueur :</strong> 17 juillet 2026<br>
+<strong>Dernière mise à jour :</strong> 1er août 2026</p>
+<hr>
+<h2 id="1-introduction-1">1. Introduction</h2>
+<p>Full Gospel Mission (« <strong>nous</strong> ») exploite <strong>MPE Cantiques - Officiel - MM</strong> (l’« <strong>Application</strong> »), une application mobile qui vous permet de consulter des paroles de cantiques, des partitions et des enregistrements audio publiés par Full Gospel Mission.</p>
+<p>La présente Politique de confidentialité explique quelles informations sont traitées lorsque vous utilisez l’Application, comment nous les utilisons, avec qui nous les partageons, et quels choix vous avez. Elle s’applique à l’Application sur Android, iOS et les autres plateformes où elle est distribuée.</p>
+<p>En utilisant l’Application, vous acceptez les pratiques décrites dans cette politique. Si vous n’êtes pas d’accord, veuillez ne pas utiliser l’Application.</p>
+<hr>
+<h2 id="2-qui-est-responsable-de-vos-données">2. Qui est responsable de vos données</h2>
+<p><strong>Responsable du traitement :</strong><br>
+Full Gospel Mission<br>
+Bepanda Casmando<br>
+Bepanda 00000<br>
+Douala, Cameroun</p>
+<p><strong>Contact confidentialité :</strong><br>
+E-mail : appsindustry068@gmail.com</p>
+<p>Pour les utilisateurs situés dans l’Espace économique européen (EEE), au Royaume-Uni ou en Suisse, Full Gospel Mission est le responsable du traitement des données personnelles décrites dans cette politique.</p>
+<hr>
+<h2 id="3-résumé">3. Résumé</h2>
+<table>
+<thead>
+<tr>
+<th>Sujet</th>
+<th>Ce que fait l’Application</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Comptes utilisateur</td>
+<td><strong>Non.</strong> L’Application ne nécessite ni inscription ni connexion.</td>
+</tr>
+<tr>
+<td>Publicité</td>
+<td><strong>Non.</strong> Nous n’affichons pas de publicités et n’utilisons pas d’identifiants publicitaires.</td>
+</tr>
+<tr>
+<td>Analytique</td>
+<td><strong>Pas de SDK d’analytique dédié.</strong> Nous n’utilisons pas Google Analytics ni d’outils similaires dans l’application.</td>
+</tr>
+<tr>
+<td>Identifiants d’appareil</td>
+<td><strong>Via Firebase uniquement</strong> — des identifiants d’installation/d’appareil peuvent être traités par Google pour faire fonctionner les services Firebase.</td>
+</tr>
+<tr>
+<td>Localisation</td>
+<td><strong>Non.</strong> Nous ne collectons pas de position GPS ni de localisation précise.</td>
+</tr>
+<tr>
+<td>Caméra / microphone / contacts</td>
+<td><strong>Non.</strong> Ces éléments ne sont pas utilisés.</td>
+</tr>
+<tr>
+<td>Favoris et réglages</td>
+<td>Stockés <strong>uniquement sur votre appareil</strong>.</td>
+</tr>
+<tr>
+<td>Catalogue de cantiques</td>
+<td>Téléchargé depuis <strong>Google Firebase (Firestore)</strong>.</td>
+</tr>
+<tr>
+<td>Audio et partitions</td>
+<td>Téléchargés depuis <strong>Firebase Storage</strong> lorsque vous les demandez.</td>
+</tr>
+<tr>
+<td>Partage des paroles</td>
+<td>Utilise la <strong>feuille de partage système</strong> de votre appareil ; nous ne recevons pas le contenu partagé.</td>
+</tr>
+<tr>
+<td>Paiements (si activés)</td>
+<td>Traités par <strong>Google Play Billing</strong> (Android) ou <strong>Apple In-App Purchase</strong> (iOS) ; nous ne collectons ni ne stockons les détails de carte bancaire.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="4-informations-que-nous-collectons">4. Informations que nous collectons</h2>
+<p>Nous collectons uniquement les informations nécessaires au fonctionnement de l’Application. Nous <strong>ne vendons pas</strong> vos informations personnelles.</p>
+<h3 id="41-informations-stockées-localement-sur-votre-appareil">4.1 Informations stockées localement sur votre appareil</h3>
+<p>Les données suivantes restent sur votre appareil tant que vous ne supprimez pas l’Application ou ne les effacez pas via les réglages :</p>
+<table>
+<thead>
+<tr>
+<th>Donnée</th>
+<th>Finalité</th>
+<th>Stockage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Cantiques favoris</strong></td>
+<td>Enregistrer les cantiques que vous marquez comme favoris</td>
+<td>Uniquement sur votre appareil</td>
+</tr>
+<tr>
+<td><strong>Préférence de thème</strong></td>
+<td>Thème clair, sombre ou système</td>
+<td>Uniquement sur votre appareil</td>
+</tr>
+<tr>
+<td><strong>Couleur d’accent</strong></td>
+<td>Choix de couleur de l’interface</td>
+<td>Uniquement sur votre appareil</td>
+</tr>
+<tr>
+<td><strong>Taille et police</strong></td>
+<td>Préférences d’affichage du texte des cantiques</td>
+<td>Uniquement sur votre appareil</td>
+</tr>
+<tr>
+<td><strong>Catalogue de cantiques en cache</strong></td>
+<td>Accès hors ligne aux métadonnées</td>
+<td>Uniquement sur votre appareil</td>
+</tr>
+<tr>
+<td><strong>Fichiers audio téléchargés</strong></td>
+<td>Lecture hors ligne</td>
+<td>Uniquement sur votre appareil</td>
+</tr>
+<tr>
+<td><strong>Partitions téléchargées</strong></td>
+<td>Consultation hors ligne</td>
+<td>Uniquement sur votre appareil</td>
+</tr>
+<tr>
+<td><strong>Statut de déblocage d’achat</strong></td>
+<td>Se souvenir que l’accès complet a été acheté</td>
+<td>Uniquement sur votre appareil</td>
+</tr>
+</tbody>
+</table>
+<p>Ces données <strong>ne sont pas envoyées sur nos serveurs</strong> et <strong>ne sont pas liées à votre identité</strong>, car l’Application n’a pas de comptes utilisateur.</p>
+<p>Vous pouvez supprimer les audios, partitions et le cache des cantiques à tout moment dans <strong>Réglages → Effacer les données téléchargées</strong>. Les favoris et préférences d’apparence sont supprimés lorsque vous désinstallez l’Application ou effacez les données de l’application au niveau du système.</p>
+<h3 id="42-informations-traitées-lors-de-lutilisation-des-fonctionnalités">4.2 Informations traitées lors de l’utilisation des fonctionnalités</h3>
+<table>
+<thead>
+<tr>
+<th>Activité</th>
+<th>Données concernées</th>
+<th>Envoyées à nous ?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Parcourir / rechercher des cantiques</strong></td>
+<td>Les termes de recherche sont traités uniquement en mémoire sur votre appareil</td>
+<td>Non</td>
+</tr>
+<tr>
+<td><strong>Actualiser le catalogue</strong></td>
+<td>L’Application demande des documents de cantiques à Firestore</td>
+<td>Lecture seule ; aucun identifiant utilisateur attaché par notre code</td>
+</tr>
+<tr>
+<td><strong>Télécharger audio ou partition</strong></td>
+<td>Requête HTTP vers l’URL Firebase Storage du cantique sélectionné</td>
+<td>La requête va vers Google/Firebase ; nous n’enregistrons pas votre identité</td>
+</tr>
+<tr>
+<td><strong>Partager un cantique</strong></td>
+<td>Titre, numéro et paroles que vous choisissez de partager</td>
+<td>Non — le partage passe directement par votre système vers l’application choisie (ex. WhatsApp, Mail)</td>
+</tr>
+<tr>
+<td><strong>Vérifier les mises à jour</strong></td>
+<td>Version de l’app et informations de plateforme</td>
+<td>Envoyées à l’App Store / Google Play via la bibliothèque Upgrader</td>
+</tr>
+<tr>
+<td><strong>Charger les polices</strong></td>
+<td>Fichiers de polices demandés à Google Fonts</td>
+<td>Requête vers le CDN de Google</td>
+</tr>
+<tr>
+<td><strong>Acheter l’accès complet</strong></td>
+<td>Achat intégré géré par Google Play ou Apple</td>
+<td>Paiement et historique d’achat traités par la boutique ; nous recevons uniquement la confirmation via le SDK de facturation</td>
+</tr>
+<tr>
+<td><strong>Restaurer les achats</strong></td>
+<td>Revalidation des achats antérieurs</td>
+<td>Demande envoyée à Google Play ou Apple ; nous ne recevons pas vos identifiants de paiement</td>
+</tr>
+</tbody>
+</table>
+<h3 id="43-achats-intégrés-uniquement-si-vous-utilisez-les-fonctionnalités-payantes">4.3 Achats intégrés (uniquement si vous utilisez les fonctionnalités payantes)</h3>
+<p>Si vous achetez l’accès complet à l’Application, le paiement est entièrement traité par :</p>
+<ul>
+<li><strong>Google Play Billing</strong> sur Android, ou</li>
+<li><strong>Apple In-App Purchase</strong> sur iOS</li>
+</ul>
+<p>Nous <strong>ne collectons, ne recevons ni ne stockons</strong> votre numéro de carte bancaire, vos coordonnées bancaires ni vos identifiants mobile money. Google ou Apple traitent les informations de paiement selon leurs propres politiques de confidentialité et conditions.</p>
+<p>L’Application reçoit de la boutique uniquement ce qui est nécessaire pour débloquer les fonctionnalités, notamment :</p>
+<ul>
+<li>Quel produit a été acheté</li>
+<li>Le statut d’achat / d’entitlement</li>
+<li>Les références de transaction fournies par la plateforme de facturation</li>
+</ul>
+<p>Nous stockons un <strong>indicateur local de déblocage</strong> sur votre appareil après un achat réussi afin que l’Application puisse accorder l’accès hors ligne. Vous pouvez utiliser <strong>Restaurer les achats</strong> pour récupérer l’accès sur un nouvel appareil connecté au même compte boutique.</p>
+<blockquote>
+<p><strong>Remarque :</strong> Les fonctionnalités payantes peuvent ne pas être activées dans toutes les versions ou régions. Cette section s’applique dès que la fonctionnalité d’achat intégré est disponible.</p>
+</blockquote>
+<h3 id="44-informations-que-nous-ne-collectons-pas">4.4 Informations que nous <strong>ne</strong> collectons <strong>pas</strong></h3>
+<p>Nous ne collectons <strong>pas</strong> intentionnellement :</p>
+<ul>
+<li>Adresses e-mail ou mots de passe pour des comptes utilisateur (aucun compte n’existe)</li>
+<li>Localisation précise ou approximative</li>
+<li>Contacts, photos, calendrier, ou fichiers hors du dossier de téléchargement de l’Application</li>
+<li>Données de santé, biométriques ou d’identité officielle</li>
+<li>Identifiants publicitaires ou de suivi inter-applications</li>
+<li>Cookies (il s’agit d’une application mobile native, pas d’un site web)</li>
+</ul>
+<h3 id="45-informations-collectées-automatiquement-par-des-sdk-tiers">4.5 Informations collectées automatiquement par des SDK tiers</h3>
+<p>Nous utilisons <strong>Firebase Core</strong> et <strong>Cloud Firestore</strong>. Lorsque l’Application se connecte à Firebase, Google peut automatiquement traiter certaines informations techniques nécessaires au service, notamment :</p>
+<ul>
+<li><strong>Identifiants d’appareil ou d’installation</strong> (tels que les Firebase Installation IDs ou app instance IDs)</li>
+<li><strong>Adresse IP</strong> et métadonnées de connexion générales</li>
+<li><strong>Données de diagnostic et de performance</strong> liées au fonctionnement du SDK</li>
+</ul>
+<p>Nous n’utilisons pas Firebase pour créer des profils utilisateur ni pour vous suivre sur d’autres applications ou sites web. Firebase Analytics <strong>n’est pas activé</strong> dans notre Application. Nous n’intégrons ni Google Analytics, ni Firebase Crashlytics, ni de SDK publicitaires.</p>
+<p>Pour plus d’informations, consultez la <a href="https://policies.google.com/privacy">Politique de confidentialité de Google</a> et la <a href="https://firebase.google.com/support/privacy">documentation confidentialité Firebase</a>.</p>
+<hr>
+<h2 id="5-comment-nous-utilisons-les-informations">5. Comment nous utilisons les informations</h2>
+<p>Nous utilisons les informations uniquement pour :</p>
+<ol>
+<li><strong>Fournir les fonctionnalités principales</strong> — affichage des cantiques, favoris, lecteur audio, visionneuse de partitions, recherche et réglages</li>
+<li><strong>Synchroniser le contenu</strong> — récupérer le catalogue et les médias depuis Firebase</li>
+<li><strong>Améliorer la fiabilité</strong> — mettre le contenu en cache pour un usage hors ligne</li>
+<li><strong>Vérifier les achats intégrés</strong> — lorsque vous achetez ou restaurez l’accès complet via Google Play ou Apple</li>
+<li><strong>Proposer des mises à jour</strong> — comparer votre version avec la fiche de la boutique</li>
+<li><strong>Respecter la loi</strong> — répondre aux demandes légales valides lorsque cela est requis</li>
+</ol>
+<p>Nous n’utilisons <strong>pas</strong> vos données pour de la publicité ciblée, du profilage, ni pour une prise de décision automatisée affectant vos droits.</p>
+<hr>
+<h2 id="6-bases-légales-du-traitement-utilisateurs-eee--royaume-uni">6. Bases légales du traitement (utilisateurs EEE / Royaume-Uni)</h2>
+<p>Lorsque le RGPD ou le UK GDPR s’applique, nous nous fondons sur :</p>
+<table>
+<thead>
+<tr>
+<th>Traitement</th>
+<th>Base légale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fourniture des fonctionnalités (catalogue, téléchargements, favoris, réglages)</td>
+<td><strong>Exécution d’un contrat</strong> / <strong>intérêts légitimes</strong> (exploitation de l’Application que vous avez demandée)</td>
+</tr>
+<tr>
+<td>Achats intégrés optionnels</td>
+<td><strong>Exécution d’un contrat</strong> (lorsque vous initiez un achat via la boutique)</td>
+</tr>
+<tr>
+<td>Données techniques/diagnostiques Firebase</td>
+<td><strong>Intérêts légitimes</strong> (sécurité, stabilité) et <strong>rôle de Google en tant que sous-traitant/fournisseur</strong></td>
+</tr>
+<tr>
+<td>Conformité légale</td>
+<td><strong>Obligation légale</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Vous pouvez retirer votre consentement pour un traitement optionnel (ex. paiements) en n’utilisant pas cette fonctionnalité.</p>
+<hr>
+<h2 id="7-comment-nous-partageons-les-informations">7. Comment nous partageons les informations</h2>
+<p>Nous <strong>ne vendons</strong> ni <strong>ne louons</strong> vos informations personnelles.</p>
+<p>Nous partageons des données uniquement avec les prestataires ci-dessous, strictement pour faire fonctionner l’Application :</p>
+<table>
+<thead>
+<tr>
+<th>Destinataire</th>
+<th>Rôle</th>
+<th>Données partagées</th>
+<th>Politique de confidentialité</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Google Firebase / Google Cloud</strong></td>
+<td>Catalogue de cantiques (Firestore), hébergement des médias (Storage), infrastructure SDK</td>
+<td>Requêtes réseau ; identifiants d’appareil/d’installation et autres données techniques selon Google</td>
+<td><a href="https://policies.google.com/privacy">Politique Google</a></td>
+</tr>
+<tr>
+<td><strong>Google Fonts</strong></td>
+<td>Typographie</td>
+<td>Adresse IP, requêtes de polices</td>
+<td><a href="https://policies.google.com/privacy">Politique Google</a></td>
+</tr>
+<tr>
+<td><strong>Google Play Billing / Apple In-App Purchase</strong></td>
+<td>Traitement des achats intégrés et restauration des droits (si utilisés)</td>
+<td>Statut d’achat, ID produit, métadonnées de transaction gérées par le système de facturation</td>
+<td><a href="https://policies.google.com/privacy">Google Play</a> / <a href="https://www.apple.com/legal/privacy/">Apple</a></td>
+</tr>
+<tr>
+<td><strong>Apple App Store / Google Play</strong></td>
+<td>Distribution et vérification des mises à jour</td>
+<td>Métadonnées standard de boutique via Upgrader</td>
+<td><a href="https://www.apple.com/legal/privacy/">Apple</a> / <a href="https://policies.google.com/privacy">Google Play</a></td>
+</tr>
+</tbody>
+</table>
+<p>Nous pouvons également divulguer des informations si la loi, une décision de justice ou la protection des droits, de la sécurité et de la sûreté de Full Gospel Mission, de nos utilisateurs ou du public l’exige.</p>
+<p>Si Full Gospel Mission est impliquée dans une fusion, une acquisition ou une cession d’actifs, les informations utilisateurs peuvent être transférées sous réserve de la présente politique.</p>
+<hr>
+<h2 id="8-transferts-internationaux-de-données">8. Transferts internationaux de données</h2>
+<p>Firebase, Google Play et les services Apple peuvent traiter des données sur des serveurs situés hors de votre pays, y compris aux États-Unis. Le cas échéant, ces prestataires proposent des garanties appropriées (telles que les clauses contractuelles types) pour les transferts internationaux.</p>
+<hr>
+<h2 id="9-conservation-des-données">9. Conservation des données</h2>
+<table>
+<thead>
+<tr>
+<th>Type de donnée</th>
+<th>Durée de conservation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Favoris et réglages locaux</td>
+<td>Jusqu’à ce que vous les modifiiez, effaciez les données de l’app ou désinstalliez l’Application</td>
+</tr>
+<tr>
+<td>Médias téléchargés et cache des cantiques</td>
+<td>Jusqu’à <strong>Effacer les données téléchargées</strong> ou désinstallation</td>
+</tr>
+<tr>
+<td>Catalogue Firestore</td>
+<td>Stocké sur Google Firebase selon nos pratiques de gestion de contenu ; non lié à des utilisateurs individuels</td>
+</tr>
+<tr>
+<td>Historique d’achats chez Google / Apple</td>
+<td>Régi par les politiques de conservation de Google Play ou Apple</td>
+</tr>
+<tr>
+<td>E-mails d’assistance (si vous nous contactez)</td>
+<td>Jusqu’à <strong>24 mois</strong> après résolution de votre demande, sauf obligation légale plus longue</td>
+</tr>
+</tbody>
+</table>
+<p>Nous ne maintenons pas de profils de compte utilisateur, car l’Application n’a pas de système de connexion.</p>
+<hr>
+<h2 id="10-sécurité">10. Sécurité</h2>
+<p>Nous prenons des mesures raisonnables pour protéger les informations, notamment :</p>
+<ul>
+<li><strong>HTTPS/TLS</strong> pour les communications réseau avec Firebase, Google Play, Apple et les services Google</li>
+<li>Accès <strong>en lecture seule</strong> à Firestore depuis l’Application (aucune écriture utilisateur dans notre base)</li>
+<li><strong>Stockage sur l’appareil</strong> pour les préférences personnelles, pas sur notre propre backend</li>
+</ul>
+<p>Aucune méthode de transmission ou de stockage n’est sécurisée à 100 %. Vous utilisez l’Application à vos propres risques.</p>
+<hr>
+<h2 id="11-autorisations-de-lappareil">11. Autorisations de l’appareil</h2>
+<p>L’Application nécessite un <strong>accès Internet</strong> pour synchroniser les cantiques, télécharger les médias et se connecter à Firebase et aux services des boutiques.</p>
+<p>Sur <strong>Android</strong>, lorsque les achats intégrés sont activés, l’Application utilise <strong>Google Play Billing</strong>. L’autorisation de facturation est incluse automatiquement par la bibliothèque de facturation de Google et sert uniquement à traiter et restaurer les achats via Google Play.</p>
+<p>Nous <strong>ne demandons pas</strong> d’autorisations pour la localisation, la caméra, le microphone, les contacts, la photothèque ou les notifications dans la version actuelle de l’Application.</p>
+<p>Lorsque vous partagez le texte d’un cantique, vous choisissez l’application de destination ; nous ne contrôlons pas les applications tierces vers lesquelles vous partagez.</p>
+<hr>
+<h2 id="12-vos-choix-et-vos-droits">12. Vos choix et vos droits</h2>
+<h3 id="121-dans-lapplication">12.1 Dans l’Application</h3>
+<ul>
+<li><strong>Retirer des favoris</strong> — retirer n’importe quel cantique des favoris</li>
+<li><strong>Effacer les téléchargements</strong> — Réglages → Effacer les données téléchargées</li>
+<li><strong>Réinitialiser les préférences</strong> — désinstaller l’Application ou effacer le stockage de l’app dans les réglages système</li>
+<li><strong>Restaurer les achats</strong> — récupérer un achat boutique antérieur sur un nouvel appareil</li>
+<li><strong>Ne plus partager</strong> — n’utilisez simplement pas le bouton de partage</li>
+</ul>
+<p>L’historique d’achats et les remboursements sont gérés par <strong>Google Play</strong> ou <strong>Apple</strong> selon leurs politiques.</p>
+<h3 id="122-demande-de-suppression-des-données">12.2 Demande de suppression des données</h3>
+<p>Comme l’Application n’utilise pas de comptes utilisateur, la plupart de vos données sont stockées <strong>uniquement sur votre appareil</strong> et peuvent être supprimées sans nous contacter :</p>
+<ol>
+<li><strong>Dans l’Application :</strong> Réglages → <strong>Effacer les données téléchargées</strong> (supprime le cache des cantiques, l’audio et les partitions)</li>
+<li><strong>Sur votre appareil :</strong> désinstallez l’Application ou effacez le stockage de l’app dans les réglages système (supprime favoris, préférences et statut local de déblocage)</li>
+</ol>
+<p>Si vous nous avez contactés par e-mail et souhaitez que toute correspondance ou autre donnée que nous détenons soit supprimée, écrivez-nous à :</p>
+<p><strong>appsindustry068@gmail.com</strong></p>
+<p>Utilisez l’objet : <strong>Demande de suppression de données</strong></p>
+<p>Veuillez indiquer :</p>
+<ul>
+<li>Le nom de l’application (<strong>MPE Cantiques - Officiel - MM</strong>)</li>
+<li>Une brève description de ce que vous souhaitez supprimer</li>
+<li>L’adresse e-mail utilisée pour nous contacter (le cas échéant)</li>
+</ul>
+<p>Nous confirmerons la réception et répondrons dans un délai de <strong>30 jours</strong>. Les enregistrements d’achat détenus par Google Play ou Apple doivent être demandés via ces plateformes selon leurs politiques.</p>
+<p>Vous pouvez aussi lire cette politique en ligne sur <strong>https://sites.google.com/view/fgmn-hymnal-privacy-policy</strong> ou dans l’Application : <strong>Réglages → Mentions légales → Politique de confidentialité</strong>.</p>
+<h3 id="123-droits-à-la-vie-privée-eee--royaume-uni--suisse--rgpd">12.3 Droits à la vie privée (EEE / Royaume-Uni / Suisse — RGPD)</h3>
+<p>Vous avez le droit de :</p>
+<ul>
+<li><strong>Accéder</strong> aux données personnelles que nous détenons à votre sujet</li>
+<li><strong>Rectifier</strong> les données inexactes</li>
+<li><strong>Effacer</strong> les données (« droit à l’oubli »)</li>
+<li><strong>Limiter</strong> le traitement dans certains cas</li>
+<li><strong>Portabilité</strong> des données le cas échéant</li>
+<li><strong>Vous opposer</strong> au traitement fondé sur les intérêts légitimes</li>
+<li><strong>Déposer une plainte</strong> auprès de votre autorité de contrôle locale</li>
+</ul>
+<p>Comme la plupart des données sont stockées uniquement sur votre appareil, vous pouvez souvent exercer ces droits directement en effaçant les données de l’Application ou en la désinstallant. Pour les demandes portant sur des données traitées par nous ou nos sous-traitants, écrivez à <strong>appsindustry068@gmail.com</strong>.</p>
+<h3 id="124-résidents-de-californie-ccpa--cpra">12.4 Résidents de Californie (CCPA / CPRA)</h3>
+<p>Nous <strong>ne vendons</strong> ni <strong>ne partageons</strong> d’informations personnelles à des fins de publicité comportementale contextuelle croisée.</p>
+<p>Les résidents de Californie peuvent demander :</p>
+<ul>
+<li><strong>L’accès</strong> aux informations personnelles collectées</li>
+<li><strong>La suppression</strong> des informations personnelles</li>
+<li><strong>La correction</strong> des informations inexactes</li>
+<li><strong>La non-discrimination</strong> pour l’exercice de leurs droits</li>
+</ul>
+<p>Pour soumettre une demande : <strong>appsindustry068@gmail.com</strong>. Nous vérifierons et répondrons dans les délais prévus par la loi.</p>
+<h3 id="125-autres-régions">12.5 Autres régions</h3>
+<p>Nous respectons les lois sur la protection de la vie privée applicables dans votre juridiction. Contactez-nous pour exercer les droits disponibles selon le droit local.</p>
+<hr>
+<h2 id="13-confidentialité-des-enfants">13. Confidentialité des enfants</h2>
+<p>L’Application est une application générale de cantiques et <strong>n’est pas destinée aux enfants de moins de 13 ans</strong> (ou à l’âge du consentement numérique applicable dans votre pays, par ex. <strong>16 ans</strong> dans certains États membres de l’UE).</p>
+<p>Nous ne collectons <strong>pas</strong> sciemment d’informations personnelles auprès d’enfants. Si vous pensez qu’un enfant a fourni des informations personnelles via un paiement ou un canal d’assistance, contactez-nous à <strong>appsindustry068@gmail.com</strong> et nous prendrons des mesures pour les supprimer.</p>
+<p>Les parents et tuteurs doivent superviser l’utilisation de l’Application par les enfants, y compris le partage et les fonctionnalités de paiement.</p>
+<hr>
+<h2 id="14-liens-et-services-tiers">14. Liens et services tiers</h2>
+<p>L’Application peut ouvrir des fichiers téléchargés dans des visionneuses externes (PDF/image/audio) via le système d’exploitation. Ces applications ont leurs propres politiques de confidentialité.</p>
+<p>Les fichiers multimédias peuvent être chargés depuis Firebase Storage. Les achats intégrés sont gérés par Google Play ou Apple. Nous ne sommes pas responsables des services tiers que vous choisissez d’utiliser en dehors de l’Application.</p>
+<hr>
+<h2 id="15-modifications-de-cette-politique">15. Modifications de cette politique</h2>
+<p>Nous pouvons mettre à jour cette Politique de confidentialité de temps à autre. Dans ce cas, nous réviserons la date de <strong>« Dernière mise à jour »</strong> en haut du document. Les changements importants peuvent aussi être communiqués dans l’Application ou sur notre site web.</p>
+<p>L’utilisation continue de l’Application après une mise à jour signifie que vous acceptez la politique révisée.</p>
+<hr>
+<h2 id="16-nous-contacter">16. Nous contacter</h2>
+<p>Pour toute question, demande ou réclamation relative à la confidentialité :</p>
+<p><strong>Full Gospel Mission</strong><br>
+E-mail : <strong>appsindustry068@gmail.com</strong><br>
+Adresse : <strong>Bepanda Casmando, Bepanda 00000, Douala, Cameroun</strong><br>
+Site de l’organisation : <strong>https://fullgospel-mission.org/</strong><br>
+Politique de confidentialité : <strong>https://sites.google.com/view/fgmn-hymnal-privacy-policy</strong></p>
+<p>Nous visons à répondre sous <strong>30 jours</strong>.</p>
+<hr>
+<h2 id="17-résumé-data-safety--étiquette-de-confidentialité-référence">17. Résumé Data Safety / étiquette de confidentialité (référence)</h2>
+<p>Pour les déclarations Google Play « Data safety » et Apple « Privacy Nutrition Label », l’Application déclare généralement :</p>
+<table>
+<thead>
+<tr>
+<th>Déclaration</th>
+<th>Détails</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Données collectées</strong></td>
+<td>Historique d’achat traité par Google Play ou Apple lors d’un achat intégré ; identifiants d’appareil/d’installation et données de diagnostic via Firebase selon Google</td>
+</tr>
+<tr>
+<td><strong>Données non collectées</strong></td>
+<td>Numéros de carte, comptes bancaires, numéros mobile money, localisation, contacts, photos, enregistrements micro — non collectés par nous</td>
+</tr>
+<tr>
+<td><strong>Données partagées</strong></td>
+<td>Validation d’achat avec Google Play / Apple ; données techniques et identifiants avec Google/Firebase comme décrit ci-dessus</td>
+</tr>
+<tr>
+<td><strong>Chiffrement en transit</strong></td>
+<td>Oui (HTTPS)</td>
+</tr>
+<tr>
+<td><strong>Demande de suppression possible</strong></td>
+<td>Oui — dans l’app (Réglages → Effacer les données téléchargées), réglages appareil, ou e-mail <strong>appsindustry068@gmail.com</strong> avec l’objet <strong>Demande de suppression de données</strong></td>
+</tr>
+<tr>
+<td><strong>Audit de sécurité indépendant</strong></td>
+<td>Non</td>
+</tr>
+</tbody>
+</table>
+<p>Adaptez les déclarations boutique si les fonctionnalités de paiement sont désactivées dans une version donnée.</p>
+<hr>
+<p><em>© Full Gospel Mission. Tous droits réservés.</em></p>
+
+</body>
+</html>

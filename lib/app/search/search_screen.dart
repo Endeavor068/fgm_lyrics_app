@@ -3,11 +3,13 @@ import 'package:fgm_lyrics_app/app/lyric/lyric_controller.dart';
 import 'package:fgm_lyrics_app/app/lyric/screens/lyric_list_screen.dart';
 import 'package:fgm_lyrics_app/core/models/lyric.dart';
 import 'package:fgm_lyrics_app/core/utils/context_extension.dart';
+import 'package:fgm_lyrics_app/core/utils/hymn_search.dart';
 import 'package:fgm_lyrics_app/core/widgets/app_default_spacing.dart';
 import 'package:fgm_lyrics_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
@@ -25,27 +27,33 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   void initState() {
     super.initState();
     _controller.addListener(_filter);
-    // Auto-focus the text field when the screen loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _focusNode.requestFocus();
+      if (mounted) _focusNode.requestFocus();
     });
   }
 
   void _filter() {
-    final query = _controller.text.toLowerCase();
+    final query = _controller.text.trim();
     final isEnglish = ref.read(deviceLocaleProvider) == LanguageEnum.en.name;
-    final allLyrics = isEnglish
-        ? ref.read(englishHymnProvider).value ?? []
-        : ref.read(frenchHymnProvider).value ?? [];
-    setState(() {
-      _filteredLyrics = allLyrics
-          .where((lyric) => lyric.songTitle.toLowerCase().contains(query))
-          .toList();
-    });
+    final english = ref.read(englishHymnProvider).value ?? const <Lyric>[];
+    final french = ref.read(frenchHymnProvider).value ?? const <Lyric>[];
+
+    final next = query.isEmpty
+        ? (isEnglish ? english : french)
+        : searchHymns(
+            query: query,
+            english: english,
+            french: french,
+            preferredLanguageIsEnglish: isEnglish,
+          );
+
+    if (!mounted) return;
+    setState(() => _filteredLyrics = next);
   }
 
   @override
   void dispose() {
+    _controller.removeListener(_filter);
     _controller.dispose();
     _focusNode.dispose();
     super.dispose();
@@ -55,13 +63,19 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final isEnglish = ref.watch(deviceLocaleProvider) == LanguageEnum.en.name;
-    if (_controller.text.isEmpty) {
-      _filteredLyrics =
-          ref
-              .watch(isEnglish ? englishHymnProvider : frenchHymnProvider)
-              .value ??
-          [];
-    }
+
+    // Refresh results when catalogs become available.
+    ref.watch(englishHymnProvider);
+    ref.watch(frenchHymnProvider);
+
+    final queryEmpty = _controller.text.trim().isEmpty;
+    final results = queryEmpty
+        ? (ref
+                  .watch(isEnglish ? englishHymnProvider : frenchHymnProvider)
+                  .value ??
+              _filteredLyrics)
+        : _filteredLyrics;
+
     return Scaffold(
       appBar: AppBar(
         surfaceTintColor: Colors.transparent,
@@ -70,7 +84,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         actions: [
           IconButton(
             onPressed: () => context.pop(),
-            icon: const Icon(Icons.close),
+            icon: const Icon(LucideIcons.x),
           ),
         ],
       ),
@@ -84,7 +98,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               hintText: l10n.searchHint,
             ),
             const Gutter(),
-            Expanded(child: LyricListView(lyrics: _filteredLyrics)),
+            Expanded(child: LyricListView(lyrics: results)),
           ],
         ),
       ),
@@ -95,24 +109,41 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 class SearchInputField extends StatelessWidget {
   const SearchInputField({
     super.key,
-    required this._controller,
-    required this._focusNode,
+    required this.controller,
+    required this.focusNode,
     required this.hintText,
   });
 
-  final TextEditingController _controller;
-  final FocusNode _focusNode;
+  final TextEditingController controller;
+  final FocusNode focusNode;
   final String hintText;
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: _controller,
-      focusNode: _focusNode,
-      decoration: InputDecoration(
-        prefixIcon: const Icon(Icons.search_rounded, color: Colors.grey),
-        hintText: hintText,
-      ),
+    final l10n = AppLocalizations.of(context)!;
+    final scheme = Theme.of(context).colorScheme;
+    return ValueListenableBuilder<TextEditingValue>(
+      valueListenable: controller,
+      builder: (context, value, _) {
+        return TextFormField(
+          controller: controller,
+          focusNode: focusNode,
+          decoration: InputDecoration(
+            prefixIcon: const Icon(LucideIcons.search, color: Colors.grey),
+            hintText: hintText,
+            suffixIcon: value.text.isNotEmpty
+                ? IconButton(
+                    tooltip: l10n.clear,
+                    onPressed: controller.clear,
+                    icon: Icon(
+                      LucideIcons.x,
+                      color: scheme.onSurface.withValues(alpha: 0.45),
+                    ),
+                  )
+                : null,
+          ),
+        );
+      },
     );
   }
 }

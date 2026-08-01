@@ -15,6 +15,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get hymnalsTitle => 'Cantiques';
 
   @override
+  String get appBrandTagline => 'OFFICIEL · FGM';
+
+  @override
   String get settingsTooltip => 'Réglages';
 
   @override
@@ -28,7 +31,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get searchTitle => 'Rechercher';
 
   @override
-  String get searchHint => 'Rechercher des cantiques…';
+  String get searchHint => 'Rechercher titre ou paroles…';
 
   @override
   String get favoritesTitle => 'Favoris';
@@ -38,16 +41,65 @@ class AppLocalizationsFr extends AppLocalizations {
       'Aucun favori pour le moment.\nAjoutez des cantiques depuis la liste pour les voir ici.';
 
   @override
-  String get splashOrganizationName => 'Full Gospel Mission';
+  String get splashOrganizationName => 'MPE Cantiques - Officiel - MM';
 
   @override
   String get settingsTitle => 'Réglages';
+
+  @override
+  String get navHome => 'Accueil';
+
+  @override
+  String get navFavorites => 'Favoris';
+
+  @override
+  String get navSettings => 'Paramètres';
+
+  @override
+  String get languageFrench => 'Français';
+
+  @override
+  String get languageEnglish => 'English';
+
+  @override
+  String get hymnNoTranslation =>
+      'Ce cantique n’a pas encore de version dans l’autre langue.';
+
+  @override
+  String get allHymnsOffline => 'TOUS LES CANTIQUES · HORS LIGNE';
+
+  @override
+  String get untitledHymn => 'Sans titre';
+
+  @override
+  String get noSearchResults =>
+      'Aucun cantique ne correspond à votre recherche.';
+
+  @override
+  String get addToFavorites => 'Ajouter aux favoris';
+
+  @override
+  String get removeFromFavorites => 'Retirer des favoris';
 
   @override
   String get appearanceSection => 'Apparence';
 
   @override
   String get dataSection => 'Données';
+
+  @override
+  String get legalSection => 'Mentions légales';
+
+  @override
+  String get privacyPolicyTitle => 'Politique de confidentialité';
+
+  @override
+  String get privacyPolicySubtitle =>
+      'Comment nous collectons, utilisons et protégeons vos données.';
+
+  @override
+  String get privacyPolicyOpenFailed =>
+      'Impossible d\'ouvrir la politique de confidentialité. Vérifiez votre connexion.';
 
   @override
   String get brightness => 'Luminosité';
@@ -60,13 +112,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get themeDark => 'Sombre';
-
-  @override
-  String get accentColorTitle => 'Couleur d\'accent';
-
-  @override
-  String get accentColorSubtitle =>
-      'Couleur principale des boutons et des surbrillances.';
 
   @override
   String get fontSize => 'Taille du texte';
@@ -129,6 +174,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get sheetMusicTab => 'Partition';
 
   @override
+  String get projectionTab => 'Projection';
+
+  @override
   String get composedLabel => 'Composé';
 
   @override
@@ -139,6 +187,32 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get chorusLabel => 'Refrain :';
+
+  @override
+  String get chorusSectionLabel => 'Refrain';
+
+  @override
+  String verseLabel(int number) {
+    return 'Couplet $number';
+  }
+
+  @override
+  String get projectionFullscreenHint =>
+      'Mode plein écran pour vidéoprojecteur';
+
+  @override
+  String get projectionEmpty => 'Aucune parole disponible pour la projection.';
+
+  @override
+  String projectionSlideIndicator(int current, int total) {
+    return '$current / $total';
+  }
+
+  @override
+  String get projectionTapToFullscreen => 'Toucher pour le plein écran';
+
+  @override
+  String get closeProjection => 'Fermer';
 
   @override
   String get pinchToZoom => 'Pincer pour zoomer';
@@ -249,14 +323,14 @@ class AppLocalizationsFr extends AppLocalizations {
   String get labelKey => 'Tonalité :';
 
   @override
-  String get payWallTitle => 'Acheter l\'application !';
+  String get payWallTitle => 'Débloquer l\'accès complet';
 
   @override
   String get payWallBody =>
-      'Il semble que vous n\'ayez pas encore acheté l\'application. Veuillez suivre les étapes pour bénéficier d\'un accès à vie.';
+      'Achetez une seule fois via Google Play pour débloquer l\'accès à vie à tous les cantiques, audios et partitions.';
 
   @override
-  String get payWallContinue => 'Continuer';
+  String get payWallPurchase => 'Acheter';
 
   @override
   String get payWallLoading => 'Chargement…';
@@ -265,85 +339,43 @@ class AppLocalizationsFr extends AppLocalizations {
   String get payWallAlreadyPurchased => 'Vous aviez déjà acheté ?';
 
   @override
-  String get payWallClickHere => 'Cliquez ici !';
+  String get payWallRestore => 'Restaurer les achats';
 
   @override
-  String get paymentMethodTitle => 'Choisissez un moyen de paiement';
+  String get payWallRestoreInProgress => 'Restauration…';
 
   @override
-  String get paymentMethodContinue => 'Continuer';
+  String get payWallStoreUnavailable =>
+      'Les achats intégrés ne sont pas disponibles sur cet appareil.';
 
   @override
-  String get paymentFormHeadline =>
-      'Remplissez les champs ci-dessous pour payer.';
+  String get payWallProductLoadError =>
+      'Impossible de charger les informations du produit. Réessayez plus tard.';
 
   @override
-  String get paymentHintName => 'Nom & Prénom';
+  String get payWallProductNotFound =>
+      'Le produit d\'achat n\'est pas encore configuré dans la boutique.';
 
   @override
-  String get paymentNameMinLengthError =>
-      'Le nom ou prénom doit contenir au moins 3 caractères';
+  String get payWallPurchaseStartFailed =>
+      'Impossible de démarrer l\'achat. Veuillez réessayer.';
 
   @override
-  String get paymentHintPhone => 'Numéro de téléphone';
+  String get payWallPurchaseFailed => 'L\'achat n\'a pas pu être finalisé.';
 
   @override
-  String get paymentHintEmail => 'Adresse mail (optionnel)';
+  String get payWallRestoreFailed =>
+      'Impossible de restaurer les achats. Veuillez réessayer.';
 
   @override
-  String get paymentEmailInvalid => 'Adresse mail invalide';
+  String get paymentProcessing => 'Achat en cours…';
 
   @override
-  String get paymentLoadingError => 'Erreur de chargement';
+  String get paymentSuccessTitle => 'Achat réussi !';
 
   @override
-  String get paymentRetry => 'Réessayer';
-
-  @override
-  String get paymentConfirmTitle => 'Confirmation de paiement';
-
-  @override
-  String paymentConfirmBody(String price) {
-    return 'Vous serez débité de $price XAF sur votre compte Mobile Money. Êtes-vous sûr de vouloir continuer ?';
-  }
-
-  @override
-  String get paymentCancel => 'Annuler';
-
-  @override
-  String get paymentYesContinue => 'Oui, continuer';
-
-  @override
-  String get paymentProcessing => 'Transaction en cours…';
-
-  @override
-  String get paymentConfirmPay => 'Confirmer et Payer';
-
-  @override
-  String get paymentPhoneRequired => 'Le numéro de téléphone est requis';
-
-  @override
-  String get paymentCameroonOnly =>
-      'Veuillez sélectionner un numéro camerounais';
-
-  @override
-  String get paymentPhoneInvalid => 'Numéro de téléphone invalide';
-
-  @override
-  String get paymentMtnInvalid => 'Ceci n\'est pas un numéro MTN valide';
-
-  @override
-  String get paymentOrangeInvalid => 'Ceci n\'est pas un numéro ORANGE valide';
-
-  @override
-  String get paymentMtnOrangeOnly =>
-      'Uniquement les numéros MTN et Orange pour le moment';
-
-  @override
-  String get paymentSuccessTitle => 'Paiement réussi !';
-
-  @override
-  String get paymentSuccessBody => 'Votre paiement a été effectué avec succès.';
+  String get paymentSuccessBody =>
+      'Merci ! L\'accès complet est maintenant débloqué sur cet appareil.';
 
   @override
   String get paymentSuccessContinue => 'Continuer';

@@ -2,22 +2,26 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math' show min;
 import 'dart:typed_data';
-import 'dart:ui';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:fgm_lyrics_app/app/favorite/favorite_controller.dart';
 import 'package:fgm_lyrics_app/app/harmonyforge/harmonyforge_media_service.dart';
 import 'package:fgm_lyrics_app/app/locale/locale_provider.dart';
 import 'package:fgm_lyrics_app/app/locale/theme_provider.dart';
+import 'package:fgm_lyrics_app/app/lyric/lyric_controller.dart';
+import 'package:fgm_lyrics_app/app/lyric/screens/widgets/language_toggle.dart';
+import 'package:fgm_lyrics_app/app/lyric/screens/widgets/projection_view.dart';
+import 'package:fgm_lyrics_app/app/settings/typography_settings_provider.dart';
 import 'package:fgm_lyrics_app/core/models/lyric.dart';
 import 'package:fgm_lyrics_app/core/utils/context_extension.dart';
 import 'package:fgm_lyrics_app/core/utils/string_extension.dart';
-import 'package:fgm_lyrics_app/core/widgets/hymn_text_display.dart';
+import 'package:fgm_lyrics_app/core/widgets/app_progress_indicator.dart';
 import 'package:fgm_lyrics_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:open_file/open_file.dart';
 import 'package:pdfx/pdfx.dart';
 import 'package:share_plus/share_plus.dart';
@@ -50,6 +54,9 @@ class _LyricDetailScreenState extends ConsumerState<LyricDetailScreen>
   int _selectedTabIndex = 0;
   bool _audioFileAvailable = false;
 
+  /// Hymn content currently shown (swaps when the language toggle succeeds).
+  late Lyric _displayedLyric;
+
   /// Non-null once audio is available locally (downloaded or cached).
   String? _localAudioPath;
 
@@ -59,7 +66,15 @@ class _LyricDetailScreenState extends ConsumerState<LyricDetailScreen>
   bool _audioDownloading = false;
   bool _partitionDownloading = false;
 
-  String _getAssetAudioSource() => 'songs/${widget.lyric.id}.mp3';
+  Duration _audioPosition = Duration.zero;
+  Duration _audioDuration = Duration.zero;
+  bool _isSeeking = false;
+
+  StreamSubscription<Duration>? _positionSub;
+  StreamSubscription<Duration>? _durationSub;
+  StreamSubscription<PlayerState>? _playerStateSub;
+
+  String _getAssetAudioSource() => 'songs/${_displayedLyric.id}.mp3';
 
   Future<bool> _assetAudioExists() async {
     try {
@@ -74,23 +89,49 @@ class _LyricDetailScreenState extends ConsumerState<LyricDetailScreen>
 
   @override
   void initState() {
+    super.initState();
+    _displayedLyric = widget.lyric;
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
-    super.initState();
+    _positionSub = _audioPlayer.onPositionChanged.listen((position) {
+      if (!_isSeeking && mounted) {
+        setState(() => _audioPosition = position);
+      }
+    });
+    _durationSub = _audioPlayer.onDurationChanged.listen((duration) {
+      if (mounted) setState(() => _audioDuration = duration);
+    });
+    _playerStateSub = _audioPlayer.onPlayerStateChanged.listen((state) {
+      if (!mounted) return;
+      if (state == PlayerState.playing) {
+        if (!_animationController.isCompleted) {
+          _animationController.forward();
+        }
+      } else if (state == PlayerState.paused ||
+          state == PlayerState.stopped ||
+          state == PlayerState.completed) {
+        if (_animationController.isCompleted) {
+          _animationController.reverse();
+        }
+      }
+      if (state == PlayerState.completed) {
+        setState(() => _audioPosition = Duration.zero);
+      }
+    });
   }
 
   Future<void> _checkAudioAndPartitionAvailability() async {
     final media = ref.read(harmonyForgeMediaServiceProvider);
     final fromAssets = await _assetAudioExists();
     final localAudio = await media.getLocalAudioPath(
-      widget.lyric.songId,
-      widget.lyric.contentLanguage,
+      _displayedLyric.songId,
+      _displayedLyric.contentLanguage,
     );
     final localPartition = await media.getLocalPartitionPath(
-      widget.lyric.songId,
-      widget.lyric.contentLanguage,
+      _displayedLyric.songId,
+      _displayedLyric.contentLanguage,
     );
     if (!mounted) return;
     setState(() {
@@ -108,13 +149,36 @@ class _LyricDetailScreenState extends ConsumerState<LyricDetailScreen>
 
   @override
   void dispose() {
+    _positionSub?.cancel();
+    _durationSub?.cancel();
+    _playerStateSub?.cancel();
     _animationController.dispose();
     _audioPlayer.dispose();
     super.dispose();
   }
 
+  String _formatDuration(Duration duration) {
+    final minutes = duration.inMinutes;
+    final seconds = duration.inSeconds % 60;
+    return '$minutes:${seconds.toString().padLeft(2, '0')}';
+  }
+
+  Future<void> _seekTo(Duration position) async {
+    final maxMs = _audioDuration.inMilliseconds;
+    if (maxMs <= 0) return;
+    final clamped = Duration(
+      milliseconds: position.inMilliseconds.clamp(0, maxMs),
+    );
+    await _audioPlayer.seek(clamped);
+    if (mounted) setState(() => _audioPosition = clamped);
+  }
+
+  Future<void> _seekRelative(Duration offset) async {
+    await _seekTo(_audioPosition + offset);
+  }
+
   /// Favorite key: id can be int (e.g. 1) or string (e.g. "160A").
-  String get _favoriteIdKey => widget.lyric.id.toString();
+  String get _favoriteIdKey => _displayedLyric.id.toString();
 
   void _showSnackBar(String message) {
     if (!mounted) return;
@@ -123,12 +187,66 @@ class _LyricDetailScreenState extends ConsumerState<LyricDetailScreen>
     );
   }
 
-  /// Handles a FAB tap: plays from local if cached, downloads then plays
-  /// if only a remote URL is available, or plays from a bundled asset.
-  Future<void> _handleAudioFabTap() async {
+  Lyric? _findCounterpart(List<Lyric>? list, {required bool wantEnglish}) {
+    if (list == null) return null;
+    final id = _displayedLyric.id.toString();
+    for (final lyric in list) {
+      if (lyric.id.toString() != id) continue;
+      if (wantEnglish ? lyric.availableInEn : lyric.availableInFr) {
+        return lyric;
+      }
+    }
+    return null;
+  }
+
+  Future<void> _applyDisplayedLyric(Lyric next) async {
+    try {
+      await _audioPlayer.stop();
+    } catch (_) {}
+    if (_animationController.isCompleted) {
+      _animationController.reset();
+    }
+    if (!mounted) return;
+    setState(() {
+      _displayedLyric = next;
+      _audioFileAvailable = false;
+      _localAudioPath = null;
+      _localPartitionPath = null;
+      _audioPosition = Duration.zero;
+      _audioDuration = Duration.zero;
+      _audioDownloading = false;
+      _partitionDownloading = false;
+    });
+    await _checkAudioAndPartitionAvailability();
+  }
+
+  Future<void> _onSelectLanguage({required bool wantEnglish}) async {
+    final currentlyEnglish = _displayedLyric.contentLanguage == 'en';
+    if (wantEnglish == currentlyEnglish) return;
+
+    final l10n = AppLocalizations.of(context)!;
+    final otherList = wantEnglish
+        ? ref.read(englishHymnProvider).value
+        : ref.read(frenchHymnProvider).value;
+    final counterpart = _findCounterpart(otherList, wantEnglish: wantEnglish);
+
+    if (counterpart == null) {
+      _showSnackBar(l10n.hymnNoTranslation);
+      return;
+    }
+
+    await ref
+        .read(deviceLocaleProvider.notifier)
+        .setLocale(wantEnglish ? LanguageEnum.en : LanguageEnum.fr);
+    await _applyDisplayedLyric(counterpart);
+  }
+
+  /// Plays from local if cached, downloads then plays if only a remote URL
+  /// is available, or plays from a bundled asset.
+  Future<void> _handleAudioPlayTap() async {
     if (_localAudioPath != null) {
       await _playOrPauseAudio();
-    } else if (widget.lyric.audioUrl.isNotEmpty) {
+    } else if (_displayedLyric.audioUrl.isNotEmpty) {
       await _downloadThenPlayAudio();
     } else if (_audioFileAvailable) {
       await _playOrPauseAudio();
@@ -140,35 +258,38 @@ class _LyricDetailScreenState extends ConsumerState<LyricDetailScreen>
   /// If the local file is corrupt (playback fails), it is deleted and
   /// the download flow is triggered automatically when a remote URL is set.
   Future<void> _playOrPauseAudio() async {
-    if (!_animationController.isCompleted) {
-      _animationController.forward();
-      try {
-        final source = _localAudioPath != null
-            ? DeviceFileSource(_localAudioPath!) as Source
-            : AssetSource(_getAssetAudioSource());
-        await _audioPlayer.play(source);
-      } catch (e) {
-        debugPrint('Error playing audio: $e');
-        _animationController.reverse();
-        if (_localAudioPath != null) {
-          await _deleteCorruptAudio();
-          if (widget.lyric.audioUrl.isNotEmpty) {
-            if (mounted) {
-              _showSnackBar(
-                AppLocalizations.of(context)!.corruptFileRedownloading,
-              );
-            }
-            await _downloadThenPlayAudio();
-            return;
+    if (_audioPlayer.state == PlayerState.playing) {
+      await _audioPlayer.pause();
+      return;
+    }
+
+    if (_audioPlayer.state == PlayerState.paused) {
+      await _audioPlayer.resume();
+      return;
+    }
+
+    try {
+      final source = _localAudioPath != null
+          ? DeviceFileSource(_localAudioPath!) as Source
+          : AssetSource(_getAssetAudioSource());
+      await _audioPlayer.play(source);
+    } catch (e) {
+      debugPrint('Error playing audio: $e');
+      if (_localAudioPath != null) {
+        await _deleteCorruptAudio();
+        if (_displayedLyric.audioUrl.isNotEmpty) {
+          if (mounted) {
+            _showSnackBar(
+              AppLocalizations.of(context)!.corruptFileRedownloading,
+            );
           }
-        }
-        if (mounted) {
-          _showSnackBar(AppLocalizations.of(context)!.audioCouldNotPlay);
+          await _downloadThenPlayAudio();
+          return;
         }
       }
-    } else {
-      await _audioPlayer.pause();
-      _animationController.reverse();
+      if (mounted) {
+        _showSnackBar(AppLocalizations.of(context)!.audioCouldNotPlay);
+      }
     }
   }
 
@@ -192,9 +313,9 @@ class _LyricDetailScreenState extends ConsumerState<LyricDetailScreen>
       final path = await ref
           .read(harmonyForgeMediaServiceProvider)
           .downloadAudio(
-            widget.lyric.songId,
-            widget.lyric.audioUrl,
-            widget.lyric.contentLanguage,
+            _displayedLyric.songId,
+            _displayedLyric.audioUrl,
+            _displayedLyric.contentLanguage,
           );
       if (!mounted) return;
       setState(() {
@@ -221,9 +342,9 @@ class _LyricDetailScreenState extends ConsumerState<LyricDetailScreen>
       final path = await ref
           .read(harmonyForgeMediaServiceProvider)
           .downloadPartition(
-            widget.lyric.songId,
-            widget.lyric.partitionUrl,
-            widget.lyric.contentLanguage,
+            _displayedLyric.songId,
+            _displayedLyric.partitionUrl,
+            _displayedLyric.contentLanguage,
           );
       if (!mounted) return;
       setState(() {
@@ -266,7 +387,7 @@ class _LyricDetailScreenState extends ConsumerState<LyricDetailScreen>
     try {
       await ref
           .read(favoriteNotifierProvider.notifier)
-          .toggleFavorite(widget.lyric.id);
+          .toggleFavorite(_displayedLyric.id);
     } catch (e) {
       debugPrint('Error toggling favorite: ${e.toString()}');
     } finally {
@@ -278,427 +399,500 @@ class _LyricDetailScreenState extends ConsumerState<LyricDetailScreen>
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final isFavorite = ref.watch(isFavoriteProvider(_favoriteIdKey));
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: CustomScrollView(
-        slivers: [
-          // App Bar
-          SliverAppBar(
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            expandedHeight: context.height * 0.2,
-            actions: [
-              IconButton(
-                icon: ref.watch(themeProvider) == ThemeMode.light
-                    ? const Icon(Icons.dark_mode_rounded)
-                    : const Icon(Icons.light_mode_rounded),
-                onPressed: () => ref.read(themeProvider.notifier).toggleTheme(),
-              ),
 
-              IconButton(
-                onPressed: () {
-                  _sharePlus.share(
-                    ShareParams(
-                      text: hymnText,
-                      subject:
-                          '${widget.lyric.songTitle.capitalize}'
-                          '${l10n.shareSubjectSuffix}',
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.ios_share_rounded),
-              ),
-              IconButton(
-                onPressed: () async {
-                  await _toggleFavorite();
-                },
-                icon: Icon(
-                  isFavorite.value ?? false
-                      ? Icons.favorite_rounded
-                      : Icons.favorite_border_rounded,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-            ],
-            flexibleSpace: FlexibleSpaceBar(
-              collapseMode: CollapseMode.pin,
-              stretchModes: const [
-                StretchMode.blurBackground,
-                StretchMode.zoomBackground,
-                StretchMode.fadeTitle,
-              ],
-              background: Stack(
-                fit: StackFit.expand,
-                children: [
-                  // Background Image
-                  Image.asset(
-                    "assets/logo2.png",
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: Theme.of(context).colorScheme.onPrimary,
+    ref.listen<String>(deviceLocaleProvider, (previous, next) {
+      final wantEnglish = next == LanguageEnum.en.name;
+      final currentlyEnglish = _displayedLyric.contentLanguage == 'en';
+      if (wantEnglish == currentlyEnglish) return;
+      final otherList = wantEnglish
+          ? ref.read(englishHymnProvider).value
+          : ref.read(frenchHymnProvider).value;
+      final counterpart = _findCounterpart(otherList, wantEnglish: wantEnglish);
+      if (counterpart != null) {
+        _applyDisplayedLyric(counterpart);
+      }
+    });
+
+    final audioBar = _buildAudioPlayerBar(context);
+    final bottomInset = MediaQuery.paddingOf(context).bottom;
+
+    return Scaffold(
+      extendBody: true,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: Stack(
+        children: [
+          CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                pinned: true,
+                stretch: true,
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                elevation: 0,
+                scrolledUnderElevation: 0,
+                // Compact header: full hymn info when expanded, reduced title when collapsed.
+                expandedHeight: 148,
+                actions: [
+                  IconButton(
+                    icon: ref.watch(themeProvider) == ThemeMode.light
+                        ? const Icon(LucideIcons.moon)
+                        : const Icon(LucideIcons.sun),
+                    onPressed: () =>
+                        ref.read(themeProvider.notifier).toggleTheme(),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      _sharePlus.share(
+                        ShareParams(
+                          text: hymnText,
+                          subject:
+                              '${_displayedLyric.songTitle.capitalize}'
+                              '${l10n.shareSubjectSuffix}',
+                        ),
                       );
                     },
+                    icon: const Icon(LucideIcons.share),
                   ),
-                  // Blur overlay
-                  ClipRect(
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(
-                            context,
-                          ).scaffoldBackgroundColor.withValues(alpha: 0.3),
-                        ),
-                      ),
-                    ),
-                  ),
-                  // Gradient overlay for better text readability
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          Theme.of(
-                            context,
-                          ).scaffoldBackgroundColor.withValues(alpha: 0.7),
-                        ],
-                      ),
-                    ),
-                  ),
-                  // Content with box shadow effect
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.primary.withValues(alpha: 0.2),
-                          blurRadius: 20,
-                          spreadRadius: 0,
-                          offset: const Offset(0, 4),
-                        ),
-                        BoxShadow(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.primary.withValues(alpha: 0.1),
-                          blurRadius: 40,
-                          spreadRadius: 0,
-                          offset: const Offset(0, 8),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            if (widget.lyric.displayNumber.isNotEmpty)
-                              Text(
-                                "${widget.lyric.displayNumber}. ",
-                                style: context.textTheme.titleLarge?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurface,
-                                  shadows: [
-                                    Shadow(
-                                      color: Theme.of(context)
-                                          .scaffoldBackgroundColor
-                                          .withValues(alpha: 0.8),
-                                      blurRadius: 8,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            FittedBox(
-                              child: Text(
-                                widget.lyric.songTitle.capitalize,
-                                style: context.textTheme.titleLarge?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurface,
-                                  shadows: [
-                                    Shadow(
-                                      color: Theme.of(context)
-                                          .scaffoldBackgroundColor
-                                          .withValues(alpha: 0.8),
-                                      blurRadius: 8,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        // // Author
-                        if (widget.lyric.author.isNotEmpty)
-                          Text(
-                            widget.lyric.author,
-                            style: context.textTheme.titleSmall?.copyWith(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.onSurface.withValues(alpha: 0.9),
-                              fontWeight: FontWeight.w500,
-                              shadows: [
-                                Shadow(
-                                  color: Theme.of(context)
-                                      .scaffoldBackgroundColor
-                                      .withValues(alpha: 0.8),
-                                  blurRadius: 6,
-                                ),
-                              ],
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-
-                        const Gutter(),
-                        // Metadata Section
-                        _buildMetadataGrid(),
-                      ],
+                  IconButton(
+                    onPressed: () async {
+                      await _toggleFavorite();
+                    },
+                    icon: Icon(
+                      LucideIcons.heart,
+                      color: (isFavorite.value ?? false)
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.55),
                     ),
                   ),
                 ],
+                flexibleSpace: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final topPad = MediaQuery.paddingOf(context).top;
+                    final minHeight = topPad + kToolbarHeight;
+                    final maxHeight = topPad + 148;
+                    final range = (maxHeight - minHeight).clamp(
+                      1.0,
+                      double.infinity,
+                    );
+                    final t = ((constraints.maxHeight - minHeight) / range)
+                        .clamp(0.0, 1.0);
+                    final collapsedT = 1.0 - t;
+                    final scheme = Theme.of(context).colorScheme;
+                    final bg = Theme.of(context).scaffoldBackgroundColor;
+                    final numberPrefix =
+                        _displayedLyric.displayNumber.isNotEmpty
+                        ? '${_displayedLyric.displayNumber}. '
+                        : '';
+                    final titleText =
+                        '$numberPrefix${_displayedLyric.songTitle.capitalize}';
+
+                    return Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        // Soft logo watermark — fades as the header collapses.
+                        Opacity(
+                          opacity: 0.12 * t,
+                          child: Image.asset(
+                            'assets/logo2.png',
+                            fit: BoxFit.cover,
+                            alignment: Alignment.center,
+                            errorBuilder: (_, _, _) => const SizedBox.shrink(),
+                          ),
+                        ),
+                        DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                bg.withValues(alpha: 0.55 + 0.35 * collapsedT),
+                                bg,
+                              ],
+                            ),
+                          ),
+                        ),
+                        // Expanded content: large title + author + metadata.
+                        Positioned(
+                          left: 16,
+                          right: 16,
+                          bottom: 10,
+                          child: IgnorePointer(
+                            ignoring: t < 0.15,
+                            child: Opacity(
+                              opacity: Curves.easeOut.transform(t),
+                              child: Transform.translate(
+                                offset: Offset(0, 12 * collapsedT),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      titleText,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.fraunces(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w700,
+                                        height: 1.2,
+                                        color: scheme.onSurface,
+                                      ),
+                                    ),
+                                    if (_displayedLyric.author.isNotEmpty) ...[
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        _displayedLyric.author,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.copyWith(
+                                              color: scheme.onSurface
+                                                  .withValues(alpha: 0.65),
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                      ),
+                                    ],
+                                    const SizedBox(height: 8),
+                                    _buildMetadataChips(),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        // Collapsed title — pinned in the toolbar area.
+                        Positioned(
+                          left: 56,
+                          right: 132,
+                          top: topPad,
+                          height: kToolbarHeight,
+                          child: IgnorePointer(
+                            ignoring: collapsedT < 0.4,
+                            child: Opacity(
+                              opacity: Curves.easeIn.transform(
+                                ((collapsedT - 0.35) / 0.65).clamp(0.0, 1.0),
+                              ),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  titleText,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.fraunces(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w700,
+                                    color: scheme.onSurface,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
               ),
-            ),
-          ),
 
-          // Persistent Tab Header
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: _TabHeaderDelegate(
-              lyricsLabel: l10n.lyricsTab,
-              sheetMusicLabel: l10n.sheetMusicTab,
-              selectedIndex: _selectedTabIndex,
-              onTabSelected: (index) =>
-                  setState(() => _selectedTabIndex = index),
-            ),
-          ),
+              // Persistent Tab Header
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: _TabHeaderDelegate(
+                  lyricsLabel: l10n.lyricsTab,
+                  sheetMusicLabel: l10n.sheetMusicTab,
+                  projectionLabel: l10n.projectionTab,
+                  selectedIndex: _selectedTabIndex,
+                  onTabSelected: (index) =>
+                      setState(() => _selectedTabIndex = index),
+                ),
+              ),
 
-          // Main Content
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate([
-                // Content below tabs
-                _buildTabContentSwitcher(),
-              ]),
-            ),
+              // Main Content
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    const SizedBox(height: 12),
+                    LanguageToggle(
+                      isEnglish: _displayedLyric.contentLanguage == 'en',
+                      frenchLabel: l10n.languageFrench,
+                      englishLabel: l10n.languageEnglish,
+                      onSelectFrench: () =>
+                          _onSelectLanguage(wantEnglish: false),
+                      onSelectEnglish: () =>
+                          _onSelectLanguage(wantEnglish: true),
+                    ),
+                    const SizedBox(height: 8),
+                    _buildTabContentSwitcher(),
+                  ]),
+                ),
+              ),
+              if (audioBar != null)
+                SliverToBoxAdapter(child: SizedBox(height: 110 + bottomInset)),
+            ],
           ),
+          if (audioBar != null)
+            Positioned(
+              left: 16,
+              right: 16,
+              bottom: 10 + bottomInset,
+              child: audioBar,
+            ),
         ],
       ),
-
-      floatingActionButton: _buildAudioFab(context),
     );
   }
 
-  /// Returns a FAB for audio, or null when neither a local file nor a remote
-  /// URL is available (nothing to play or download).
-  Widget? _buildAudioFab(BuildContext context) {
+  /// Floating music player, shown only on the lyrics tab when audio is
+  /// available locally or remotely.
+  Widget? _buildAudioPlayerBar(BuildContext context) {
+    if (_selectedTabIndex != 0) return null;
+
     final hasLocal = _localAudioPath != null || _audioFileAvailable;
-    final hasRemote = widget.lyric.audioUrl.isNotEmpty;
+    final hasRemote = _displayedLyric.audioUrl.isNotEmpty;
     if (!hasLocal && !hasRemote) return null;
 
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
     final isReady = hasLocal && !_audioDownloading;
     final isDownloading = _audioDownloading;
+    final canSeek = isReady && _audioDuration.inMilliseconds > 0;
+    final progress = canSeek
+        ? (_audioPosition.inMilliseconds / _audioDuration.inMilliseconds).clamp(
+            0.0,
+            1.0,
+          )
+        : 0.0;
 
-    return FloatingActionButton(
-      heroTag: 'lyric_detail_fab',
-      backgroundColor: isDownloading
-          ? Theme.of(context).colorScheme.surfaceContainerHighest
-          : Theme.of(context).colorScheme.primary,
-      onPressed: isDownloading ? null : _handleAudioFabTap,
-      child: isDownloading
-          ? SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            )
-          : isReady
-          ? AnimatedIcon(
-              icon: AnimatedIcons.play_pause,
-              progress: _animationController,
-              color: Theme.of(context).colorScheme.onPrimary,
-              size: 28,
-            )
-          : Icon(
-              Icons.download_rounded,
-              color: Theme.of(context).colorScheme.onPrimary,
-              size: 28,
+    return Material(
+      elevation: 6,
+      shadowColor: Colors.black.withValues(alpha: 0.18),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(
+          color: colorScheme.outline.withValues(alpha: isDark ? 0.28 : 0.12),
+        ),
+      ),
+      color: isDark ? colorScheme.surfaceContainerHigh : Colors.white,
+      clipBehavior: Clip.antiAlias,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                SizedBox(
+                  width: 36,
+                  child: Text(
+                    _formatDuration(_audioPosition),
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: colorScheme.onSurface.withValues(alpha: 0.7),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      trackHeight: 3,
+                      thumbShape: const RoundSliderThumbShape(
+                        enabledThumbRadius: 6,
+                      ),
+                      overlayShape: const RoundSliderOverlayShape(
+                        overlayRadius: 12,
+                      ),
+                    ),
+                    child: Slider(
+                      value: progress,
+                      onChanged: canSeek
+                          ? (value) {
+                              setState(() {
+                                _isSeeking = true;
+                                _audioPosition = Duration(
+                                  milliseconds:
+                                      (_audioDuration.inMilliseconds * value)
+                                          .round(),
+                                );
+                              });
+                            }
+                          : null,
+                      onChangeEnd: canSeek
+                          ? (value) async {
+                              setState(() => _isSeeking = false);
+                              await _seekTo(
+                                Duration(
+                                  milliseconds:
+                                      (_audioDuration.inMilliseconds * value)
+                                          .round(),
+                                ),
+                              );
+                            }
+                          : null,
+                      activeColor: colorScheme.primary,
+                      inactiveColor: colorScheme.primary.withValues(
+                        alpha: 0.25,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 36,
+                  child: Text(
+                    _formatDuration(_audioDuration),
+                    textAlign: TextAlign.end,
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: colorScheme.onSurface.withValues(alpha: 0.7),
+                    ),
+                  ),
+                ),
+              ],
             ),
+            const SizedBox(height: 2),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  visualDensity: VisualDensity.compact,
+                  tooltip: '-10s',
+                  onPressed: canSeek
+                      ? () => _seekRelative(const Duration(seconds: -10))
+                      : null,
+                  icon: const Icon(LucideIcons.rotateCcw, size: 20),
+                  color: colorScheme.onSurface,
+                ),
+                const SizedBox(width: 4),
+                FilledButton(
+                  style: FilledButton.styleFrom(
+                    shape: const CircleBorder(),
+                    padding: const EdgeInsets.all(12),
+                    minimumSize: const Size(44, 44),
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    backgroundColor: isDownloading
+                        ? colorScheme.surfaceContainerHighest
+                        : colorScheme.primary,
+                    foregroundColor: isDownloading
+                        ? colorScheme.primary
+                        : colorScheme.onPrimary,
+                  ),
+                  onPressed: isDownloading ? null : _handleAudioPlayTap,
+                  child: isDownloading
+                      ? const AppProgressIndicator(size: 20, strokeWidth: 2.4)
+                      : isReady
+                      ? Icon(
+                          _audioPlayer.state == PlayerState.playing
+                              ? LucideIcons.pause
+                              : LucideIcons.play,
+                          size: 22,
+                        )
+                      : const Icon(LucideIcons.download, size: 22),
+                ),
+                const SizedBox(width: 4),
+                IconButton(
+                  visualDensity: VisualDensity.compact,
+                  tooltip: '+10s',
+                  onPressed: canSeek
+                      ? () => _seekRelative(const Duration(seconds: 10))
+                      : null,
+                  icon: const Icon(LucideIcons.rotateCw, size: 20),
+                  color: colorScheme.onSurface,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 
-  Widget _buildMetadataGrid() {
+  Widget _buildMetadataChips() {
     final l10n = AppLocalizations.of(context)!;
-    return Row(
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    final scheme = Theme.of(context).colorScheme;
+    final year = _displayedLyric.displayYear.isNotEmpty
+        ? _displayedLyric.displayYear
+        : l10n.notAvailable;
+    final key = _displayedLyric.key.isNotEmpty
+        ? _displayedLyric.key
+        : l10n.notAvailable;
+
+    Widget chip(String label, String value) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration: BoxDecoration(
+          color: scheme.primary.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text.rich(
+          TextSpan(
             children: [
-              Text(
-                l10n.composedLabel,
-                style: context.textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.9),
-                  fontWeight: FontWeight.w500,
-                  shadows: [
-                    Shadow(
-                      color: Theme.of(
-                        context,
-                      ).scaffoldBackgroundColor.withValues(alpha: 0.8),
-                      blurRadius: 4,
-                    ),
-                  ],
+              TextSpan(
+                text: '$label · ',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: scheme.onSurface.withValues(alpha: 0.45),
                 ),
               ),
-              const GutterTiny(),
-              Text(
-                widget.lyric.displayYear.isNotEmpty
-                    ? widget.lyric.displayYear
-                    : l10n.notAvailable,
-                style: context.textTheme.titleLarge?.copyWith(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onSurface,
-                  shadows: [
-                    Shadow(
-                      color: Theme.of(
-                        context,
-                      ).scaffoldBackgroundColor.withValues(alpha: 0.8),
-                      blurRadius: 6,
-                    ),
-                  ],
+              TextSpan(
+                text: value,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: scheme.onSurface.withValues(alpha: 0.85),
                 ),
               ),
             ],
           ),
         ),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                l10n.keyLabel,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.9),
-                  fontWeight: FontWeight.w500,
-                  shadows: [
-                    Shadow(
-                      color: Theme.of(
-                        context,
-                      ).scaffoldBackgroundColor.withValues(alpha: 0.8),
-                      blurRadius: 4,
-                    ),
-                  ],
-                ),
-              ),
-              const GutterTiny(),
-              Text(
-                widget.lyric.key.isNotEmpty
-                    ? widget.lyric.key
-                    : l10n.notAvailable,
-                style: context.textTheme.titleLarge?.copyWith(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onSurface,
-                  shadows: [
-                    Shadow(
-                      color: Theme.of(
-                        context,
-                      ).scaffoldBackgroundColor.withValues(alpha: 0.8),
-                      blurRadius: 6,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
+      );
+    }
+
+    return Wrap(
+      spacing: 8,
+      runSpacing: 6,
+      children: [chip(l10n.composedLabel, year), chip(l10n.keyLabel, key)],
     );
   }
 
   Widget _buildTabContentSwitcher() {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 100),
-      child: _selectedTabIndex == 0
-          ? _buildLyricsContent()
-          : _buildSheetMusicContent(),
+      child: switch (_selectedTabIndex) {
+        0 => _buildLyricsContent(),
+        1 => _buildSheetMusicContent(),
+        _ => ProjectionTabContent(
+          key: const ValueKey('projection_tab'),
+          lyric: _displayedLyric,
+        ),
+      },
     );
   }
 
   Widget _buildLyricsContent() {
-    final l10n = AppLocalizations.of(context)!;
-    final chorusPlain = widget.lyric.chorus.stripHtmlTags;
-    return Container(
-      key: const ValueKey('lyrics'),
-      constraints: BoxConstraints(
-        minHeight: context.height,
-        minWidth: context.width,
-      ),
-      padding: const EdgeInsets.all(16),
-      margin: const EdgeInsets.only(top: 5),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).shadowColor.withAlpha(30),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // First verse or all lyrics
-          if (widget.lyric.enLyrics.isNotEmpty)
-            LyricItem(index: 1, verse: widget.lyric.enLyrics.first),
+    final chorusPlain = _displayedLyric.chorus.stripHtmlTags;
+    final verses = _displayedLyric.enLyrics;
 
-          // Chorus if exists
+    return Padding(
+      key: const ValueKey('lyrics'),
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (verses.isNotEmpty) LyricItem(index: 1, verse: verses.first),
+
           if (chorusPlain.isNotEmpty) ...[
-            const Gutter(),
-            Text(
-              l10n.chorusLabel,
-              style: GoogleFonts.ebGaramond().copyWith(
-                fontWeight: FontWeight.bold,
-                fontSize: 22,
-                decoration: TextDecoration.underline,
-              ),
-            ),
-            const GutterSmall(),
-            HymnTextDisplay(
-              text: widget.lyric.chorus,
-              fontWeight: FontWeight.bold,
-              lineHeight: 1.6,
-              color: Theme.of(context).textTheme.bodyLarge?.color,
-            ),
+            const SizedBox(height: 28),
+            _ChorusBlock(chorus: _displayedLyric.chorus),
           ],
 
-          // Additional verses
-          if (widget.lyric.enLyrics.length > 1)
-            ...widget.lyric.enLyrics.skip(1).map((verse) {
-              final index = widget.lyric.enLyrics.indexOf(verse);
-              return Column(
-                children: [
-                  const SizedBox(height: 20),
-                  LyricItem(verse: verse, index: index + 1),
-                ],
+          if (verses.length > 1)
+            ...verses.skip(1).toList().asMap().entries.map((entry) {
+              final verseIndex = entry.key + 2;
+              return Padding(
+                padding: const EdgeInsets.only(top: 28),
+                child: LyricItem(verse: entry.value, index: verseIndex),
               );
             }),
         ],
@@ -710,7 +904,7 @@ class _LyricDetailScreenState extends ConsumerState<LyricDetailScreen>
     final l10n = AppLocalizations.of(context)!;
     final path = _localPartitionPath;
     final hasLocal = path != null;
-    final hasRemote = widget.lyric.partitionUrl.isNotEmpty;
+    final hasRemote = _displayedLyric.partitionUrl.isNotEmpty;
 
     // Image partitions (PNG / JPG / WEBP) are rendered inline.
     if (hasLocal && _isImagePartition(path)) {
@@ -729,40 +923,22 @@ class _LyricDetailScreenState extends ConsumerState<LyricDetailScreen>
     }
 
     // Fallback: show action card (download or open unknown format externally).
-    final leadingIcon = hasLocal
-        ? Icons.picture_as_pdf_rounded
-        : Icons.music_note_rounded;
+    final leadingIcon = hasLocal ? LucideIcons.fileText : LucideIcons.music;
     final leadingColor = hasLocal
         ? Theme.of(context).colorScheme.primary
         : Colors.grey.shade400;
 
-    return Container(
-      constraints: BoxConstraints(
-        minHeight: context.height,
-        minWidth: context.width,
-      ),
+    return Padding(
       key: const ValueKey('sheet_music'),
-      padding: const EdgeInsets.all(16),
-      margin: EdgeInsets.only(bottom: context.height * 0.12),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).shadowColor.withAlpha(30),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+      padding: const EdgeInsets.fromLTRB(16, 28, 16, 28),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(leadingIcon, size: 64, color: leadingColor),
-          const SizedBox(height: 16),
+          Icon(leadingIcon, size: 56, color: leadingColor),
+          const SizedBox(height: 14),
           Text(
             l10n.sheetMusicHeading,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
               color: Colors.grey.shade600,
               fontWeight: FontWeight.bold,
             ),
@@ -780,11 +956,11 @@ class _LyricDetailScreenState extends ConsumerState<LyricDetailScreen>
             textAlign: TextAlign.center,
           ),
           if (hasLocal || hasRemote) ...[
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
             if (_partitionDownloading)
               const Padding(
                 padding: EdgeInsets.all(16),
-                child: CircularProgressIndicator(),
+                child: AppProgressIndicator(),
               )
             else
               FilledButton.icon(
@@ -792,7 +968,7 @@ class _LyricDetailScreenState extends ConsumerState<LyricDetailScreen>
                     ? () => _openPartitionExternally(path)
                     : _downloadThenOpenPartition,
                 icon: Icon(
-                  hasLocal ? Icons.open_in_new_rounded : Icons.download_rounded,
+                  hasLocal ? LucideIcons.externalLink : LucideIcons.download,
                 ),
                 label: Text(hasLocal ? l10n.openExternally : l10n.download),
               ),
@@ -804,52 +980,140 @@ class _LyricDetailScreenState extends ConsumerState<LyricDetailScreen>
 
   String get hymnText {
     final l10n = AppLocalizations.of(context)!;
-    final numberPrefix = widget.lyric.displayNumber.isNotEmpty
-        ? "${widget.lyric.displayNumber}.  "
+    final numberPrefix = _displayedLyric.displayNumber.isNotEmpty
+        ? "${_displayedLyric.displayNumber}.  "
         : '';
-    final firstVerse = widget.lyric.enLyrics.first.stripHtmlTags;
-    final chorus = widget.lyric.chorus.stripHtmlTags;
-    final chorusLabel = widget.lyric.chorus.isNotEmpty
+    final firstVerse = _displayedLyric.enLyrics.first.stripHtmlTags;
+    final chorus = _displayedLyric.chorus.stripHtmlTags;
+    final chorusLabel = _displayedLyric.chorus.isNotEmpty
         ? (ref.watch(deviceLocaleProvider) == LanguageEnum.en.name
               ? l10n.shareChorusPrefix
               : l10n.shareRefrainPrefix)
         : '';
-    final remainingVerses = widget.lyric.enLyrics.length > 1
-        ? widget.lyric.enLyrics
-              .sublist(1, widget.lyric.enLyrics.length - 1)
+    final remainingVerses = _displayedLyric.enLyrics.length > 1
+        ? _displayedLyric.enLyrics
+              .sublist(1, _displayedLyric.enLyrics.length - 1)
               .map((v) => '${v.stripHtmlTags.trim()}\n\n')
               .join(' ')
         : '';
-    return '*$numberPrefix${widget.lyric.songTitle.stripHtmlTags}*\n\n'
+    return '*$numberPrefix${_displayedLyric.songTitle.stripHtmlTags}*\n\n'
         '$firstVerse\n\n\n'
         '${chorus.isNotEmpty ? '$chorusLabel$chorus\n\n\n' : ''}'
         '$remainingVerses';
   }
 }
 
-class LyricItem extends StatelessWidget {
+class LyricItem extends ConsumerWidget {
   const LyricItem({super.key, required this.verse, required this.index});
 
   final String verse;
   final int index;
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '$index.',
-            style: GoogleFonts.ebGaramond().copyWith(
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final fontSize = ref.watch(fontSizeProvider);
+    final scheme = Theme.of(context).colorScheme;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _LyricSectionLabel(label: l10n.verseLabel(index)),
+        const SizedBox(height: 10),
+        _FrauncesLyricLines(
+          lines: verse.lyricLines,
+          fontSize: fontSize,
+          color: scheme.onSurface,
+        ),
+      ],
+    );
+  }
+}
+
+class _ChorusBlock extends ConsumerWidget {
+  const _ChorusBlock({required this.chorus});
+
+  final String chorus;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final fontSize = ref.watch(fontSizeProvider);
+    final scheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _LyricSectionLabel(label: l10n.chorusSectionLabel),
+        const SizedBox(height: 10),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+          decoration: BoxDecoration(
+            color: scheme.primary.withValues(alpha: isDark ? 0.16 : 0.07),
+            borderRadius: BorderRadius.circular(10),
+            border: Border(left: BorderSide(color: scheme.primary, width: 4)),
           ),
-          const Gutter(),
-          Expanded(child: HymnTextDisplay(text: verse, lineHeight: 1.6)),
-        ],
+          child: _FrauncesLyricLines(
+            lines: chorus.lyricLines,
+            fontSize: fontSize,
+            color: scheme.onSurface,
+            italic: true,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _LyricSectionLabel extends StatelessWidget {
+  const _LyricSectionLabel({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Text(
+      label.toUpperCase(),
+      style: TextStyle(
+        color: scheme.primary,
+        fontSize: 12,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 1.1,
+        height: 1.2,
+      ),
+    );
+  }
+}
+
+class _FrauncesLyricLines extends StatelessWidget {
+  const _FrauncesLyricLines({
+    required this.lines,
+    required this.fontSize,
+    required this.color,
+    this.italic = false,
+  });
+
+  final List<String> lines;
+  final double fontSize;
+  final Color color;
+  final bool italic;
+
+  @override
+  Widget build(BuildContext context) {
+    if (lines.isEmpty) return const SizedBox.shrink();
+
+    return Text(
+      lines.join('\n'),
+      textAlign: TextAlign.start,
+      style: GoogleFonts.fraunces(
+        fontSize: fontSize,
+        height: 1.55,
+        color: color,
+        fontWeight: FontWeight.w400,
+        fontStyle: italic ? FontStyle.italic : FontStyle.normal,
       ),
     );
   }
@@ -878,7 +1142,7 @@ class _PartitionImageView extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.fromLTRB(16, 2, 16, 0),
             child: Text(
               l10n.pinchToZoom,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
@@ -901,7 +1165,7 @@ class _PartitionImageView extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
-                        Icons.broken_image_rounded,
+                        LucideIcons.imageOff,
                         size: 48,
                         color: Colors.grey.shade400,
                       ),
@@ -1064,7 +1328,7 @@ class _PartitionPdfViewState extends State<_PartitionPdfView> {
         color: bg,
         child: SizedBox(
           height: viewerHeight + fabClearance,
-          child: const Center(child: CircularProgressIndicator()),
+          child: const Center(child: AppProgressIndicator()),
         ),
       );
     }
@@ -1075,65 +1339,23 @@ class _PartitionPdfViewState extends State<_PartitionPdfView> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 4, 16, 2),
+            padding: const EdgeInsets.fromLTRB(16, 2, 16, 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.swipe_rounded, size: 18, color: muted),
-                const SizedBox(width: 8),
+                Icon(LucideIcons.moveHorizontal, size: 16, color: muted),
+                const SizedBox(width: 6),
                 Flexible(
                   child: Text(
                     l10n.pinchToZoomPdf,
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: muted,
-                      height: 1.25,
-                    ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.labelSmall?.copyWith(color: muted, height: 1.2),
                   ),
                 ),
               ],
             ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(
-                tooltip: l10n.previousPage,
-                onPressed: _currentPage > 1
-                    ? () => _pageController.animateToPage(
-                        _currentPage - 2,
-                        duration: pageAnim,
-                        curve: pageCurve,
-                      )
-                    : null,
-                icon: const Icon(Icons.chevron_left_rounded),
-              ),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    l10n.pdfPageIndicator(_currentPage, _pageCount),
-                    style: Theme.of(context).textTheme.labelLarge,
-                  ),
-                  if (_pageCount > 1)
-                    _PartitionPdfPageDots(
-                      currentPage: _currentPage,
-                      pageCount: _pageCount,
-                    ),
-                ],
-              ),
-              IconButton(
-                tooltip: l10n.nextPage,
-                onPressed: _currentPage < _pageCount
-                    ? () => _pageController.animateToPage(
-                        _currentPage,
-                        duration: pageAnim,
-                        curve: pageCurve,
-                      )
-                    : null,
-                icon: const Icon(Icons.chevron_right_rounded),
-              ),
-            ],
           ),
           SizedBox(
             height: viewerHeight,
@@ -1168,7 +1390,7 @@ class _PartitionPdfViewState extends State<_PartitionPdfView> {
                               if (snap.connectionState !=
                                   ConnectionState.done) {
                                 return const Center(
-                                  child: CircularProgressIndicator(),
+                                  child: AppProgressIndicator(),
                                 );
                               }
                               if (snap.hasError ||
@@ -1199,6 +1421,52 @@ class _PartitionPdfViewState extends State<_PartitionPdfView> {
                   ),
                 ],
               ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  visualDensity: VisualDensity.compact,
+                  tooltip: l10n.previousPage,
+                  onPressed: _currentPage > 1
+                      ? () => _pageController.animateToPage(
+                          _currentPage - 2,
+                          duration: pageAnim,
+                          curve: pageCurve,
+                        )
+                      : null,
+                  icon: const Icon(LucideIcons.chevronLeft),
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      l10n.pdfPageIndicator(_currentPage, _pageCount),
+                      style: Theme.of(context).textTheme.labelLarge,
+                    ),
+                    if (_pageCount > 1)
+                      _PartitionPdfPageDots(
+                        currentPage: _currentPage,
+                        pageCount: _pageCount,
+                      ),
+                  ],
+                ),
+                IconButton(
+                  visualDensity: VisualDensity.compact,
+                  tooltip: l10n.nextPage,
+                  onPressed: _currentPage < _pageCount
+                      ? () => _pageController.animateToPage(
+                          _currentPage,
+                          duration: pageAnim,
+                          curve: pageCurve,
+                        )
+                      : null,
+                  icon: const Icon(LucideIcons.chevronRight),
+                ),
+              ],
             ),
           ),
           SizedBox(height: fabClearance),
@@ -1338,11 +1606,7 @@ class _PartitionPdfScrollCueOverlay extends StatelessWidget {
             top: 0,
             bottom: 0,
             child: Center(
-              child: Icon(
-                Icons.chevron_left_rounded,
-                size: 40,
-                color: cueColor,
-              ),
+              child: Icon(LucideIcons.chevronLeft, size: 40, color: cueColor),
             ),
           ),
         if (currentPage < pageCount)
@@ -1351,11 +1615,7 @@ class _PartitionPdfScrollCueOverlay extends StatelessWidget {
             top: 0,
             bottom: 0,
             child: Center(
-              child: Icon(
-                Icons.chevron_right_rounded,
-                size: 40,
-                color: cueColor,
-              ),
+              child: Icon(LucideIcons.chevronRight, size: 40, color: cueColor),
             ),
           ),
       ],
@@ -1366,15 +1626,60 @@ class _PartitionPdfScrollCueOverlay extends StatelessWidget {
 class _TabHeaderDelegate extends SliverPersistentHeaderDelegate {
   final String lyricsLabel;
   final String sheetMusicLabel;
+  final String projectionLabel;
   final int selectedIndex;
   final Function(int) onTabSelected;
 
   _TabHeaderDelegate({
     required this.lyricsLabel,
     required this.sheetMusicLabel,
+    required this.projectionLabel,
     required this.selectedIndex,
     required this.onTabSelected,
   });
+
+  Widget _buildTab({
+    required BuildContext context,
+    required String label,
+    required int index,
+  }) {
+    final selected = selectedIndex == index;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => onTabSelected(index),
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: selected
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).dividerColor.withValues(alpha: 0.2),
+                width: selected ? 3 : 1,
+              ),
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: selected
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(
+                        context,
+                      ).textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(
@@ -1389,72 +1694,9 @@ class _TabHeaderDelegate extends SliverPersistentHeaderDelegate {
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Row(
           children: [
-            Expanded(
-              child: GestureDetector(
-                onTap: () => onTabSelected(0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: selectedIndex == 0
-                            ? Theme.of(context).colorScheme.primary
-                            : Theme.of(
-                                context,
-                              ).dividerColor.withValues(alpha: 0.2),
-                        width: selectedIndex == 0 ? 3 : 1,
-                      ),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: Text(
-                      lyricsLabel,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: selectedIndex == 0
-                            ? Theme.of(context).colorScheme.primary
-                            : Theme.of(context).textTheme.bodyMedium?.color
-                                  ?.withValues(alpha: 0.7),
-                        fontWeight: FontWeight.w600,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Expanded(
-              child: GestureDetector(
-                onTap: () => onTabSelected(1),
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: selectedIndex == 1
-                            ? Theme.of(context).colorScheme.primary
-                            : Theme.of(
-                                context,
-                              ).dividerColor.withValues(alpha: 0.2),
-                        width: selectedIndex == 1 ? 3 : 1,
-                      ),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: Text(
-                      sheetMusicLabel,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: selectedIndex == 1
-                            ? Theme.of(context).colorScheme.primary
-                            : Theme.of(context).textTheme.bodyMedium!.color
-                                  ?.withValues(alpha: 0.7),
-                        fontWeight: FontWeight.w600,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            _buildTab(context: context, label: lyricsLabel, index: 0),
+            _buildTab(context: context, label: sheetMusicLabel, index: 1),
+            _buildTab(context: context, label: projectionLabel, index: 2),
           ],
         ),
       ),
@@ -1462,10 +1704,10 @@ class _TabHeaderDelegate extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent => 100.0;
+  double get maxExtent => 44.0;
 
   @override
-  double get minExtent => 100.0;
+  double get minExtent => 44.0;
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>

@@ -15,6 +15,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hymnalsTitle => 'Hymnals';
 
   @override
+  String get appBrandTagline => 'OFFICIAL · FGM';
+
+  @override
   String get settingsTooltip => 'Settings';
 
   @override
@@ -28,7 +31,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchTitle => 'Search';
 
   @override
-  String get searchHint => 'Search hymns…';
+  String get searchHint => 'Search title or lyrics…';
 
   @override
   String get favoritesTitle => 'Favorites';
@@ -38,16 +41,64 @@ class AppLocalizationsEn extends AppLocalizations {
       'No favorites yet.\nAdd songs from the list to see them here.';
 
   @override
-  String get splashOrganizationName => 'Full Gospel Mission';
+  String get splashOrganizationName => 'FGM Hymnals - Official - MM';
 
   @override
   String get settingsTitle => 'Settings';
+
+  @override
+  String get navHome => 'Home';
+
+  @override
+  String get navFavorites => 'Favorites';
+
+  @override
+  String get navSettings => 'Settings';
+
+  @override
+  String get languageFrench => 'Français';
+
+  @override
+  String get languageEnglish => 'English';
+
+  @override
+  String get hymnNoTranslation =>
+      'This hymn is not available in the other language yet.';
+
+  @override
+  String get allHymnsOffline => 'ALL HYMNS · OFFLINE';
+
+  @override
+  String get untitledHymn => 'Untitled';
+
+  @override
+  String get noSearchResults => 'No hymns match your search.';
+
+  @override
+  String get addToFavorites => 'Add to favorites';
+
+  @override
+  String get removeFromFavorites => 'Remove from favorites';
 
   @override
   String get appearanceSection => 'Appearance';
 
   @override
   String get dataSection => 'Data';
+
+  @override
+  String get legalSection => 'Legal';
+
+  @override
+  String get privacyPolicyTitle => 'Privacy Policy';
+
+  @override
+  String get privacyPolicySubtitle =>
+      'How we collect, use, and protect your data.';
+
+  @override
+  String get privacyPolicyOpenFailed =>
+      'Could not open the privacy policy. Check your connection.';
 
   @override
   String get brightness => 'Brightness';
@@ -60,12 +111,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get themeDark => 'Dark';
-
-  @override
-  String get accentColorTitle => 'Accent color';
-
-  @override
-  String get accentColorSubtitle => 'Primary color for buttons and highlights.';
 
   @override
   String get fontSize => 'Font Size';
@@ -129,6 +174,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sheetMusicTab => 'Sheet Music';
 
   @override
+  String get projectionTab => 'Projection';
+
+  @override
   String get composedLabel => 'Composed';
 
   @override
@@ -139,6 +187,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chorusLabel => 'Chorus:';
+
+  @override
+  String get chorusSectionLabel => 'Chorus';
+
+  @override
+  String verseLabel(int number) {
+    return 'Verse $number';
+  }
+
+  @override
+  String get projectionFullscreenHint => 'Fullscreen mode for video projector';
+
+  @override
+  String get projectionEmpty => 'No lyrics available for projection.';
+
+  @override
+  String projectionSlideIndicator(int current, int total) {
+    return '$current / $total';
+  }
+
+  @override
+  String get projectionTapToFullscreen => 'Tap to open fullscreen';
+
+  @override
+  String get closeProjection => 'Close';
 
   @override
   String get pinchToZoom => 'Pinch to zoom';
@@ -246,14 +319,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labelKey => 'Key:';
 
   @override
-  String get payWallTitle => 'Buy the app!';
+  String get payWallTitle => 'Unlock full access';
 
   @override
   String get payWallBody =>
-      'It looks like you haven\'t purchased the app yet. Follow the steps to get lifetime access.';
+      'Purchase once through Google Play to unlock lifetime access to all hymns, audio, and sheet music.';
 
   @override
-  String get payWallContinue => 'Continue';
+  String get payWallPurchase => 'Purchase';
 
   @override
   String get payWallLoading => 'Loading…';
@@ -262,81 +335,43 @@ class AppLocalizationsEn extends AppLocalizations {
   String get payWallAlreadyPurchased => 'Already purchased?';
 
   @override
-  String get payWallClickHere => 'Tap here';
+  String get payWallRestore => 'Restore purchases';
 
   @override
-  String get paymentMethodTitle => 'Choose a payment method';
+  String get payWallRestoreInProgress => 'Restoring…';
 
   @override
-  String get paymentMethodContinue => 'Continue';
+  String get payWallStoreUnavailable =>
+      'In-app purchases are not available on this device.';
 
   @override
-  String get paymentFormHeadline => 'Fill in the fields below to pay.';
+  String get payWallProductLoadError =>
+      'Could not load product information. Please try again later.';
 
   @override
-  String get paymentHintName => 'First & last name';
+  String get payWallProductNotFound =>
+      'The purchase product is not configured in the store yet.';
 
   @override
-  String get paymentNameMinLengthError => 'Name must be at least 3 characters';
+  String get payWallPurchaseStartFailed =>
+      'Could not start the purchase. Please try again.';
 
   @override
-  String get paymentHintPhone => 'Phone number';
+  String get payWallPurchaseFailed => 'The purchase could not be completed.';
 
   @override
-  String get paymentHintEmail => 'Email (optional)';
+  String get payWallRestoreFailed =>
+      'Could not restore purchases. Please try again.';
 
   @override
-  String get paymentEmailInvalid => 'Invalid email address';
+  String get paymentProcessing => 'Processing purchase…';
 
   @override
-  String get paymentLoadingError => 'Loading error';
+  String get paymentSuccessTitle => 'Purchase successful!';
 
   @override
-  String get paymentRetry => 'Retry';
-
-  @override
-  String get paymentConfirmTitle => 'Payment confirmation';
-
-  @override
-  String paymentConfirmBody(String price) {
-    return 'You will be charged $price XAF from your Mobile Money account. Do you want to continue?';
-  }
-
-  @override
-  String get paymentCancel => 'Cancel';
-
-  @override
-  String get paymentYesContinue => 'Yes, continue';
-
-  @override
-  String get paymentProcessing => 'Processing transaction…';
-
-  @override
-  String get paymentConfirmPay => 'Confirm and pay';
-
-  @override
-  String get paymentPhoneRequired => 'Phone number is required';
-
-  @override
-  String get paymentCameroonOnly => 'Please use a Cameroon number';
-
-  @override
-  String get paymentPhoneInvalid => 'Invalid phone number';
-
-  @override
-  String get paymentMtnInvalid => 'This is not a valid MTN number';
-
-  @override
-  String get paymentOrangeInvalid => 'This is not a valid Orange number';
-
-  @override
-  String get paymentMtnOrangeOnly => 'Only MTN and Orange numbers for now';
-
-  @override
-  String get paymentSuccessTitle => 'Payment successful!';
-
-  @override
-  String get paymentSuccessBody => 'Your payment was completed successfully.';
+  String get paymentSuccessBody =>
+      'Thank you! Full access is now unlocked on this device.';
 
   @override
   String get paymentSuccessContinue => 'Continue';

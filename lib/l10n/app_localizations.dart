@@ -110,6 +110,12 @@ abstract class AppLocalizations {
   /// **'Hymnals'**
   String get hymnalsTitle;
 
+  /// No description provided for @appBrandTagline.
+  ///
+  /// In en, this message translates to:
+  /// **'OFFICIAL · FGM'**
+  String get appBrandTagline;
+
   /// No description provided for @settingsTooltip.
   ///
   /// In en, this message translates to:
@@ -137,7 +143,7 @@ abstract class AppLocalizations {
   /// No description provided for @searchHint.
   ///
   /// In en, this message translates to:
-  /// **'Search hymns…'**
+  /// **'Search title or lyrics…'**
   String get searchHint;
 
   /// No description provided for @favoritesTitle.
@@ -155,7 +161,7 @@ abstract class AppLocalizations {
   /// No description provided for @splashOrganizationName.
   ///
   /// In en, this message translates to:
-  /// **'Full Gospel Mission'**
+  /// **'FGM Hymnals - Official - MM'**
   String get splashOrganizationName;
 
   /// No description provided for @settingsTitle.
@@ -163,6 +169,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Settings'**
   String get settingsTitle;
+
+  /// No description provided for @navHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get navHome;
+
+  /// No description provided for @navFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get navFavorites;
+
+  /// No description provided for @navSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get navSettings;
+
+  /// No description provided for @languageFrench.
+  ///
+  /// In en, this message translates to:
+  /// **'Français'**
+  String get languageFrench;
+
+  /// No description provided for @languageEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get languageEnglish;
+
+  /// No description provided for @hymnNoTranslation.
+  ///
+  /// In en, this message translates to:
+  /// **'This hymn is not available in the other language yet.'**
+  String get hymnNoTranslation;
+
+  /// No description provided for @allHymnsOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'ALL HYMNS · OFFLINE'**
+  String get allHymnsOffline;
+
+  /// No description provided for @untitledHymn.
+  ///
+  /// In en, this message translates to:
+  /// **'Untitled'**
+  String get untitledHymn;
+
+  /// No description provided for @noSearchResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No hymns match your search.'**
+  String get noSearchResults;
+
+  /// No description provided for @addToFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to favorites'**
+  String get addToFavorites;
+
+  /// No description provided for @removeFromFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from favorites'**
+  String get removeFromFavorites;
 
   /// No description provided for @appearanceSection.
   ///
@@ -175,6 +247,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Data'**
   String get dataSection;
+
+  /// No description provided for @legalSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal'**
+  String get legalSection;
+
+  /// No description provided for @privacyPolicyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicyTitle;
+
+  /// No description provided for @privacyPolicySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How we collect, use, and protect your data.'**
+  String get privacyPolicySubtitle;
+
+  /// No description provided for @privacyPolicyOpenFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the privacy policy. Check your connection.'**
+  String get privacyPolicyOpenFailed;
 
   /// No description provided for @brightness.
   ///
@@ -199,18 +295,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Dark'**
   String get themeDark;
-
-  /// No description provided for @accentColorTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Accent color'**
-  String get accentColorTitle;
-
-  /// No description provided for @accentColorSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Primary color for buttons and highlights.'**
-  String get accentColorSubtitle;
 
   /// No description provided for @fontSize.
   ///
@@ -320,6 +404,12 @@ abstract class AppLocalizations {
   /// **'Sheet Music'**
   String get sheetMusicTab;
 
+  /// No description provided for @projectionTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Projection'**
+  String get projectionTab;
+
   /// No description provided for @composedLabel.
   ///
   /// In en, this message translates to:
@@ -343,6 +433,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Chorus:'**
   String get chorusLabel;
+
+  /// No description provided for @chorusSectionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Chorus'**
+  String get chorusSectionLabel;
+
+  /// No description provided for @verseLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Verse {number}'**
+  String verseLabel(int number);
+
+  /// No description provided for @projectionFullscreenHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Fullscreen mode for video projector'**
+  String get projectionFullscreenHint;
+
+  /// No description provided for @projectionEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No lyrics available for projection.'**
+  String get projectionEmpty;
+
+  /// No description provided for @projectionSlideIndicator.
+  ///
+  /// In en, this message translates to:
+  /// **'{current} / {total}'**
+  String projectionSlideIndicator(int current, int total);
+
+  /// No description provided for @projectionTapToFullscreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to open fullscreen'**
+  String get projectionTapToFullscreen;
+
+  /// No description provided for @closeProjection.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get closeProjection;
 
   /// No description provided for @pinchToZoom.
   ///
@@ -533,20 +665,20 @@ abstract class AppLocalizations {
   /// No description provided for @payWallTitle.
   ///
   /// In en, this message translates to:
-  /// **'Buy the app!'**
+  /// **'Unlock full access'**
   String get payWallTitle;
 
   /// No description provided for @payWallBody.
   ///
   /// In en, this message translates to:
-  /// **'It looks like you haven\'t purchased the app yet. Follow the steps to get lifetime access.'**
+  /// **'Purchase once through Google Play to unlock lifetime access to all hymns, audio, and sheet music.'**
   String get payWallBody;
 
-  /// No description provided for @payWallContinue.
+  /// No description provided for @payWallPurchase.
   ///
   /// In en, this message translates to:
-  /// **'Continue'**
-  String get payWallContinue;
+  /// **'Purchase'**
+  String get payWallPurchase;
 
   /// No description provided for @payWallLoading.
   ///
@@ -560,154 +692,70 @@ abstract class AppLocalizations {
   /// **'Already purchased?'**
   String get payWallAlreadyPurchased;
 
-  /// No description provided for @payWallClickHere.
+  /// No description provided for @payWallRestore.
   ///
   /// In en, this message translates to:
-  /// **'Tap here'**
-  String get payWallClickHere;
+  /// **'Restore purchases'**
+  String get payWallRestore;
 
-  /// No description provided for @paymentMethodTitle.
+  /// No description provided for @payWallRestoreInProgress.
   ///
   /// In en, this message translates to:
-  /// **'Choose a payment method'**
-  String get paymentMethodTitle;
+  /// **'Restoring…'**
+  String get payWallRestoreInProgress;
 
-  /// No description provided for @paymentMethodContinue.
+  /// No description provided for @payWallStoreUnavailable.
   ///
   /// In en, this message translates to:
-  /// **'Continue'**
-  String get paymentMethodContinue;
+  /// **'In-app purchases are not available on this device.'**
+  String get payWallStoreUnavailable;
 
-  /// No description provided for @paymentFormHeadline.
+  /// No description provided for @payWallProductLoadError.
   ///
   /// In en, this message translates to:
-  /// **'Fill in the fields below to pay.'**
-  String get paymentFormHeadline;
+  /// **'Could not load product information. Please try again later.'**
+  String get payWallProductLoadError;
 
-  /// No description provided for @paymentHintName.
+  /// No description provided for @payWallProductNotFound.
   ///
   /// In en, this message translates to:
-  /// **'First & last name'**
-  String get paymentHintName;
+  /// **'The purchase product is not configured in the store yet.'**
+  String get payWallProductNotFound;
 
-  /// No description provided for @paymentNameMinLengthError.
+  /// No description provided for @payWallPurchaseStartFailed.
   ///
   /// In en, this message translates to:
-  /// **'Name must be at least 3 characters'**
-  String get paymentNameMinLengthError;
+  /// **'Could not start the purchase. Please try again.'**
+  String get payWallPurchaseStartFailed;
 
-  /// No description provided for @paymentHintPhone.
+  /// No description provided for @payWallPurchaseFailed.
   ///
   /// In en, this message translates to:
-  /// **'Phone number'**
-  String get paymentHintPhone;
+  /// **'The purchase could not be completed.'**
+  String get payWallPurchaseFailed;
 
-  /// No description provided for @paymentHintEmail.
+  /// No description provided for @payWallRestoreFailed.
   ///
   /// In en, this message translates to:
-  /// **'Email (optional)'**
-  String get paymentHintEmail;
-
-  /// No description provided for @paymentEmailInvalid.
-  ///
-  /// In en, this message translates to:
-  /// **'Invalid email address'**
-  String get paymentEmailInvalid;
-
-  /// No description provided for @paymentLoadingError.
-  ///
-  /// In en, this message translates to:
-  /// **'Loading error'**
-  String get paymentLoadingError;
-
-  /// No description provided for @paymentRetry.
-  ///
-  /// In en, this message translates to:
-  /// **'Retry'**
-  String get paymentRetry;
-
-  /// No description provided for @paymentConfirmTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Payment confirmation'**
-  String get paymentConfirmTitle;
-
-  /// No description provided for @paymentConfirmBody.
-  ///
-  /// In en, this message translates to:
-  /// **'You will be charged {price} XAF from your Mobile Money account. Do you want to continue?'**
-  String paymentConfirmBody(String price);
-
-  /// No description provided for @paymentCancel.
-  ///
-  /// In en, this message translates to:
-  /// **'Cancel'**
-  String get paymentCancel;
-
-  /// No description provided for @paymentYesContinue.
-  ///
-  /// In en, this message translates to:
-  /// **'Yes, continue'**
-  String get paymentYesContinue;
+  /// **'Could not restore purchases. Please try again.'**
+  String get payWallRestoreFailed;
 
   /// No description provided for @paymentProcessing.
   ///
   /// In en, this message translates to:
-  /// **'Processing transaction…'**
+  /// **'Processing purchase…'**
   String get paymentProcessing;
-
-  /// No description provided for @paymentConfirmPay.
-  ///
-  /// In en, this message translates to:
-  /// **'Confirm and pay'**
-  String get paymentConfirmPay;
-
-  /// No description provided for @paymentPhoneRequired.
-  ///
-  /// In en, this message translates to:
-  /// **'Phone number is required'**
-  String get paymentPhoneRequired;
-
-  /// No description provided for @paymentCameroonOnly.
-  ///
-  /// In en, this message translates to:
-  /// **'Please use a Cameroon number'**
-  String get paymentCameroonOnly;
-
-  /// No description provided for @paymentPhoneInvalid.
-  ///
-  /// In en, this message translates to:
-  /// **'Invalid phone number'**
-  String get paymentPhoneInvalid;
-
-  /// No description provided for @paymentMtnInvalid.
-  ///
-  /// In en, this message translates to:
-  /// **'This is not a valid MTN number'**
-  String get paymentMtnInvalid;
-
-  /// No description provided for @paymentOrangeInvalid.
-  ///
-  /// In en, this message translates to:
-  /// **'This is not a valid Orange number'**
-  String get paymentOrangeInvalid;
-
-  /// No description provided for @paymentMtnOrangeOnly.
-  ///
-  /// In en, this message translates to:
-  /// **'Only MTN and Orange numbers for now'**
-  String get paymentMtnOrangeOnly;
 
   /// No description provided for @paymentSuccessTitle.
   ///
   /// In en, this message translates to:
-  /// **'Payment successful!'**
+  /// **'Purchase successful!'**
   String get paymentSuccessTitle;
 
   /// No description provided for @paymentSuccessBody.
   ///
   /// In en, this message translates to:
-  /// **'Your payment was completed successfully.'**
+  /// **'Thank you! Full access is now unlocked on this device.'**
   String get paymentSuccessBody;
 
   /// No description provided for @paymentSuccessContinue.

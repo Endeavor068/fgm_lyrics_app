@@ -1,7 +1,7 @@
 name: fgm_lyrics_app
 description: "Full Gospel Mission app for browsing and sharing new hymns lyrics, supporting multiple languages and modern UI."
 publish_to: 'none'
-version: 1.0.0+4
+version: 1.2.0+7
 
 environment:
   sdk: ^3.12.0
@@ -11,26 +11,25 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  google_fonts: ^8.1.0
+  google_fonts: ^8.2.0
   shared_preferences: ^2.5.5
   path: ^1.9.1
   path_provider: ^2.1.6
-  share_plus: ^13.1.0
+  share_plus: ^13.2.1
   flutter_riverpod: ^3.3.2
   flutter_gutter: ^2.2.0
-  audioplayers: ^6.7.1
-  flutter_form_builder: ^10.3.0+1
-  form_builder_validators: ^11.3.0
-  phone_form_field: ^10.0.17
+  audioplayers: ^6.8.1
+  in_app_purchase: ^3.2.3
   http: ^1.6.0
-  json_annotation: ^4.12.0
+  url_launcher: ^6.3.2
   upgrader: ^13.5.0
-  firebase_core: ^4.10.0
-  cloud_firestore: ^6.5.0
+  firebase_core: ^4.12.1
+  cloud_firestore: ^6.7.1
   flutter_html: ^3.0.0
   open_file: ^4.0.0
   pdfx: ^2.9.2
   synchronized: ^3.4.1
+  lucide_icons_flutter: ^3.1.15
   # google_mobile_ads: ^9.0.0
 
 dev_dependencies:
@@ -38,8 +37,6 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^6.0.0
   riverpod_lint: ^3.1.4
-  json_serializable: ^6.14.0
-  build_runner: ^2.15.0
 
 flutter:
   generate: true
