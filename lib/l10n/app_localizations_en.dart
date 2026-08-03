@@ -106,8 +106,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get testNotificationTitle => 'Test notification';
 
   @override
-  String get testNotificationSubtitle =>
-      'Send a sample praise reminder now (temporary).';
+  String get testNotificationSubtitle => 'Send a sample praise reminder now.';
 
   @override
   String get testNotificationSent => 'Test notification sent.';

@@ -1421,6 +1421,7 @@ class _DetailTabBody extends StatelessWidget {
       children: [
         _TabPageScroll(
           bottomPadding: bottomContentPadding,
+          showWatermark: true,
           child: _LyricsTabContent(lyric: lyric),
         ),
         _TabPageScroll(
@@ -1453,11 +1454,13 @@ class _TabPageScroll extends StatelessWidget {
     required this.child,
     required this.bottomPadding,
     this.center = false,
+    this.showWatermark = false,
   });
 
   final Widget child;
   final double bottomPadding;
   final bool center;
+  final bool showWatermark;
 
   @override
   Widget build(BuildContext context) {
@@ -1475,12 +1478,43 @@ class _TabPageScroll extends StatelessWidget {
               )
             : child;
 
-        return SingleChildScrollView(
+        final scrollView = SingleChildScrollView(
           physics: const BouncingScrollPhysics(
             parent: AlwaysScrollableScrollPhysics(),
           ),
           padding: EdgeInsets.only(bottom: bottomPadding),
           child: content,
+        );
+
+        if (!showWatermark) return scrollView;
+
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final watermarkWidth = constraints.maxWidth;
+
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            // Fixed viewport watermark — does not scroll with lyrics.
+            Positioned.fill(
+              child: IgnorePointer(
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: bottomPadding * 0.35),
+                  child: Center(
+                    child: Image.asset(
+                      'assets/logo2.png',
+                      width: watermarkWidth,
+                      fit: BoxFit.fitWidth,
+                      alignment: Alignment.center,
+                      opacity: AlwaysStoppedAnimation(isDark ? 0.09 : 0.12),
+                      cacheWidth: imageCachePx(context, watermarkWidth),
+                      filterQuality: FilterQuality.low,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            scrollView,
+          ],
         );
       },
     );
@@ -1504,64 +1538,44 @@ class _LyricsTabContent extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
-      child: Stack(
-        alignment: Alignment.center,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Positioned.fill(
-            child: IgnorePointer(
-              child: Image.asset(
-                'assets/logo2.png',
-                fit: BoxFit.fitWidth,
-                width: double.infinity,
-                alignment: Alignment.center,
-                opacity: AlwaysStoppedAnimation(
-                  Theme.of(context).brightness == Brightness.dark ? 0.07 : 0.10,
-                ),
-                cacheWidth: imageCachePx(context, 320),
-                filterQuality: FilterQuality.low,
-              ),
+          Text(
+            titleText,
+            style: GoogleFonts.fraunces(
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+              height: 1.2,
+              color: scheme.onSurface,
             ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                titleText,
-                style: GoogleFonts.fraunces(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                  height: 1.2,
-                  color: scheme.onSurface,
-                ),
+          if (lyric.author.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Text(
+              lyric.author,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: scheme.onSurface.withValues(alpha: 0.65),
+                fontWeight: FontWeight.w500,
               ),
-              if (lyric.author.isNotEmpty) ...[
-                const SizedBox(height: 4),
-                Text(
-                  lyric.author,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: scheme.onSurface.withValues(alpha: 0.65),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-              const SizedBox(height: 10),
-              _MetadataChips(lyric: lyric),
-              const SizedBox(height: 20),
-              if (verses.isNotEmpty) LyricItem(index: 1, verse: verses.first),
-              if (chorusPlain.isNotEmpty) ...[
-                const SizedBox(height: 28),
-                _ChorusBlock(chorus: lyric.chorus),
-              ],
-              if (verses.length > 1)
-                ...verses.skip(1).toList().asMap().entries.map((entry) {
-                  final verseIndex = entry.key + 2;
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 28),
-                    child: LyricItem(verse: entry.value, index: verseIndex),
-                  );
-                }),
-            ],
-          ),
+            ),
+          ],
+          const SizedBox(height: 10),
+          _MetadataChips(lyric: lyric),
+          const SizedBox(height: 20),
+          if (verses.isNotEmpty) LyricItem(index: 1, verse: verses.first),
+          if (chorusPlain.isNotEmpty) ...[
+            const SizedBox(height: 28),
+            _ChorusBlock(chorus: lyric.chorus),
+          ],
+          if (verses.length > 1)
+            ...verses.skip(1).toList().asMap().entries.map((entry) {
+              final verseIndex = entry.key + 2;
+              return Padding(
+                padding: const EdgeInsets.only(top: 28),
+                child: LyricItem(verse: entry.value, index: verseIndex),
+              );
+            }),
         ],
       ),
     );

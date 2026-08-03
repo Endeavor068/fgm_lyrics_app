@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:fgm_lyrics_app/app/locale/locale_provider.dart';
 import 'package:fgm_lyrics_app/app/notifications/praise_messages.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -49,7 +50,9 @@ class PraiseNotificationService {
     tzdata.initializeTimeZones();
     await _configureLocalTimeZone();
 
-    const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
+    // Status-bar small icon: white silhouette on transparent (Android alpha mask).
+    // Name only — no @drawable/ prefix (plugin looks up type "drawable").
+    const androidInit = AndroidInitializationSettings('ic_stat_notification');
     const iosInit = DarwinInitializationSettings(
       requestAlertPermission: false,
       requestBadgePermission: false,
@@ -88,6 +91,8 @@ class PraiseNotificationService {
         _channelId,
         _channelName,
         channelDescription: _channelDescription,
+        icon: 'ic_stat_notification',
+        color: const Color(0xFF000000),
         importance: Importance.high,
         priority: Priority.high,
         styleInformation: BigTextStyleInformation(body),
@@ -173,7 +178,7 @@ class PraiseNotificationService {
     }
   }
 
-  /// TEMP: immediate notification for manual QA — remove after testing.
+  /// Immediate notification for manual QA.
   Future<void> showTestNotification() async {
     if (kIsWeb) return;
     if (!_initialized) await init();

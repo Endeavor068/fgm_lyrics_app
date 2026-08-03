@@ -287,7 +287,7 @@ abstract class AppLocalizations {
   /// No description provided for @testNotificationSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Send a sample praise reminder now (temporary).'**
+  /// **'Send a sample praise reminder now.'**
   String get testNotificationSubtitle;
 
   /// No description provided for @testNotificationSent.

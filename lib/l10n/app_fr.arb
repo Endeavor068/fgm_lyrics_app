@@ -31,7 +31,7 @@
   "praiseRemindersTitle": "Rappels de louange",
   "praiseRemindersSubtitle": "Une notification par jour avec un message inspirant pour louer Dieu.",
   "testNotificationTitle": "Tester la notification",
-  "testNotificationSubtitle": "Envoyer un rappel de louange maintenant (temporaire).",
+  "testNotificationSubtitle": "Envoyer un rappel de louange maintenant.",
   "testNotificationSent": "Notification de test envoyée.",
   "testNotificationPermissionDenied": "Permission de notification refusée.",
   "audioNowPlaying": "En lecture",

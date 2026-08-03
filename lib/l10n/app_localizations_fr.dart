@@ -108,7 +108,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get testNotificationSubtitle =>
-      'Envoyer un rappel de louange maintenant (temporaire).';
+      'Envoyer un rappel de louange maintenant.';
 
   @override
   String get testNotificationSent => 'Notification de test envoyée.';

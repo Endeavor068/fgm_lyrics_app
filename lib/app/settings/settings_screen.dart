@@ -189,7 +189,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   const _FontFamilyTile(),
                   _SectionHeader(label: l10n.remindersSection),
                   const _PraiseRemindersTile(),
-                  // TEMP: remove after notification QA.
                   const Divider(height: 1, indent: 56),
                   _SettingsTile(
                     icon: LucideIcons.bellRing,

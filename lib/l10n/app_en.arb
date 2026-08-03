@@ -31,7 +31,7 @@
   "praiseRemindersTitle": "Praise reminders",
   "praiseRemindersSubtitle": "One daily notification with an inspirational message to praise God.",
   "testNotificationTitle": "Test notification",
-  "testNotificationSubtitle": "Send a sample praise reminder now (temporary).",
+  "testNotificationSubtitle": "Send a sample praise reminder now.",
   "testNotificationSent": "Test notification sent.",
   "testNotificationPermissionDenied": "Notification permission denied.",
   "audioNowPlaying": "Now playing",
