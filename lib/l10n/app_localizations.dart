@@ -278,30 +278,6 @@ abstract class AppLocalizations {
   /// **'One daily notification with an inspirational message to praise God.'**
   String get praiseRemindersSubtitle;
 
-  /// No description provided for @testNotificationTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Test notification'**
-  String get testNotificationTitle;
-
-  /// No description provided for @testNotificationSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Send a sample praise reminder now.'**
-  String get testNotificationSubtitle;
-
-  /// No description provided for @testNotificationSent.
-  ///
-  /// In en, this message translates to:
-  /// **'Test notification sent.'**
-  String get testNotificationSent;
-
-  /// No description provided for @testNotificationPermissionDenied.
-  ///
-  /// In en, this message translates to:
-  /// **'Notification permission denied.'**
-  String get testNotificationPermissionDenied;
-
   /// No description provided for @audioNowPlaying.
   ///
   /// In en, this message translates to:

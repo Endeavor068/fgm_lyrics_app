@@ -3,7 +3,6 @@ import 'package:fgm_lyrics_app/app/locale/theme_provider.dart';
 import 'package:fgm_lyrics_app/app/lyric/lyric_controller.dart';
 import 'package:fgm_lyrics_app/app/lyric/lyric_repository.dart';
 import 'package:fgm_lyrics_app/app/notifications/praise_notification_provider.dart';
-import 'package:fgm_lyrics_app/app/notifications/praise_notification_service.dart';
 import 'package:fgm_lyrics_app/app/settings/typography_settings_provider.dart';
 import 'package:fgm_lyrics_app/core/shared/widgets/app_progress_indicator.dart';
 import 'package:fgm_lyrics_app/core/shared/widgets/drawer_menu_button.dart';
@@ -189,25 +188,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   const _FontFamilyTile(),
                   _SectionHeader(label: l10n.remindersSection),
                   const _PraiseRemindersTile(),
-                  const Divider(height: 1, indent: 56),
-                  _SettingsTile(
-                    icon: LucideIcons.bellRing,
-                    title: l10n.testNotificationTitle,
-                    subtitle: l10n.testNotificationSubtitle,
-                    onTap: () async {
-                      final granted = await PraiseNotificationService.instance
-                          .requestPermissionIfNeeded();
-                      if (!granted) {
-                        _showSnackBar(l10n.testNotificationPermissionDenied);
-                        return;
-                      }
-                      await PraiseNotificationService.instance
-                          .showTestNotification();
-                      if (mounted) {
-                        _showSnackBar(l10n.testNotificationSent);
-                      }
-                    },
-                  ),
                   _SectionHeader(label: l10n.dataSection),
                   _SettingsTile(
                     icon: LucideIcons.refreshCw,

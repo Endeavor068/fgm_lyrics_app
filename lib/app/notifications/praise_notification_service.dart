@@ -178,26 +178,6 @@ class PraiseNotificationService {
     }
   }
 
-  /// Immediate notification for manual QA.
-  Future<void> showTestNotification() async {
-    if (kIsWeb) return;
-    if (!_initialized) await init();
-
-    final granted = await requestPermissionIfNeeded();
-    if (!granted) return;
-
-    final french = await _isFrenchLocale();
-    final message = _messageForDay(DateTime.now());
-    final body = message.bodyFor(french);
-
-    await _plugin.show(
-      id: _idBase + 999,
-      title: message.titleFor(french),
-      body: body,
-      notificationDetails: _detailsFor(body),
-    );
-  }
-
   Future<void> scheduleReminders() async {
     if (kIsWeb) return;
     if (!_initialized) await init();

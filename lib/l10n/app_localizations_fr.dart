@@ -104,20 +104,6 @@ class AppLocalizationsFr extends AppLocalizations {
       'Une notification par jour avec un message inspirant pour louer Dieu.';
 
   @override
-  String get testNotificationTitle => 'Tester la notification';
-
-  @override
-  String get testNotificationSubtitle =>
-      'Envoyer un rappel de louange maintenant.';
-
-  @override
-  String get testNotificationSent => 'Notification de test envoyée.';
-
-  @override
-  String get testNotificationPermissionDenied =>
-      'Permission de notification refusée.';
-
-  @override
   String get audioNowPlaying => 'En lecture';
 
   @override

@@ -103,19 +103,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'One daily notification with an inspirational message to praise God.';
 
   @override
-  String get testNotificationTitle => 'Test notification';
-
-  @override
-  String get testNotificationSubtitle => 'Send a sample praise reminder now.';
-
-  @override
-  String get testNotificationSent => 'Test notification sent.';
-
-  @override
-  String get testNotificationPermissionDenied =>
-      'Notification permission denied.';
-
-  @override
   String get audioNowPlaying => 'Now playing';
 
   @override
