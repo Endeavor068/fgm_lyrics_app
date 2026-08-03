@@ -2,6 +2,57 @@
 
 All notable changes to FGM Hymns are documented in this file.
 
+## [1.3.0] — 2026-08-03
+
+**Build:** `1.3.0+9`
+
+### Added
+- Daily praise reminder notifications (optional, managed in Settings)
+- Floating navigation menu sheet from the hymn list (replaces the side drawer)
+- Compact music player as the default detail player, with always-visible seek controls
+
+### Changed
+- Music player: thinner progress bar, ±5 second skip, more room for the hymn title
+- Projection: larger fixed stage, centered lyrics, cleaner fullscreen chrome (no watermark logo)
+- Sheet music empty state restyled; Score / History content centered on screen
+- Detail tab order: Lyrics → Score → History → Projection
+- Tab bar and language toggle only reappear when scrolled fully to the top
+- App UI font set to IBM Plex Sans; splash tagline uses Official • MM
+- Removed Noto Serif from hymn font options
+
+### Fixed
+- Sliver tab header crash when collapsing chrome to a fractional height
+
+### Notes for Google Play Console (“What’s new”)
+
+**English (default)** — copy into Play Console (≤ 500 characters)
+
+```
+What's new in 1.3.0
+
+• Compact music player with seek ±5 seconds always at hand
+• Floating menu from the hymn list for faster navigation
+• Clearer Projection stage with fixed height and centered lyrics
+• Tab bar and language switch return when you scroll to the top
+• Polished sheet music screen and refreshed app typography
+• Daily praise reminder notifications you can manage in Settings
+```
+
+**Français**
+
+```
+Nouveautés de la version 1.3.0
+
+• Lecteur audio compact avec avance/retour de ±5 secondes toujours accessible
+• Menu flottant depuis la liste pour naviguer plus vite
+• Projection plus claire : hauteur fixe et paroles centrées
+• La barre d’onglets et la langue réapparaissent en haut de page
+• Écran partition peaufiné et typographie rafraîchie
+• Rappels quotidiens de louange, réglables dans les Paramètres
+```
+
+---
+
 ## [1.2.0] — 2026-08-01
 
 **Build:** `1.2.0+8`

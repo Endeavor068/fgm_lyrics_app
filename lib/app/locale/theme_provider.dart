@@ -12,12 +12,19 @@ class ThemeNotifier extends Notifier<ThemeMode> {
   @override
   ThemeMode build() {
     _loadTheme();
-    return ThemeMode.system; // Default to system theme
+    // First install: follow the device light/dark setting.
+    return ThemeMode.system;
   }
 
   Future<void> _loadTheme() async {
     final prefs = await SharedPreferences.getInstance();
-    final themeIndex = prefs.getInt(_themeKey) ?? 0;
+    // Only override when the user has explicitly chosen a theme.
+    if (!prefs.containsKey(_themeKey)) return;
+
+    final themeIndex = prefs.getInt(_themeKey);
+    if (themeIndex == null) return;
+    if (themeIndex < 0 || themeIndex >= ThemeMode.values.length) return;
+
     state = ThemeMode.values[themeIndex];
   }
 
@@ -31,13 +38,10 @@ class ThemeNotifier extends Notifier<ThemeMode> {
     switch (state) {
       case ThemeMode.light:
         setTheme(ThemeMode.dark);
-        break;
       case ThemeMode.dark:
         setTheme(ThemeMode.light);
-        break;
       case ThemeMode.system:
         setTheme(ThemeMode.light);
-        break;
     }
   }
 }

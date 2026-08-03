@@ -2,11 +2,14 @@ import 'package:fgm_lyrics_app/app/harmonyforge/harmonyforge_media_service.dart'
 import 'package:fgm_lyrics_app/app/locale/theme_provider.dart';
 import 'package:fgm_lyrics_app/app/lyric/lyric_controller.dart';
 import 'package:fgm_lyrics_app/app/lyric/lyric_repository.dart';
+import 'package:fgm_lyrics_app/app/notifications/praise_notification_provider.dart';
+import 'package:fgm_lyrics_app/app/notifications/praise_notification_service.dart';
 import 'package:fgm_lyrics_app/app/settings/typography_settings_provider.dart';
+import 'package:fgm_lyrics_app/core/shared/widgets/app_progress_indicator.dart';
+import 'package:fgm_lyrics_app/core/shared/widgets/drawer_menu_button.dart';
+import 'package:fgm_lyrics_app/core/shared/widgets/scroll_hide_chrome.dart';
 import 'package:fgm_lyrics_app/core/utils/app_links.dart';
-import 'package:fgm_lyrics_app/core/widgets/app_progress_indicator.dart';
 import 'package:fgm_lyrics_app/core/widgets/hymn_text_display.dart';
-import 'package:fgm_lyrics_app/core/widgets/scroll_hide_chrome.dart';
 import 'package:fgm_lyrics_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -159,14 +162,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   height: kToolbarHeight,
                   child: NavigationToolbar(
                     centerMiddle: false,
+                    leading: const DrawerMenuButton(),
                     middle: Align(
                       alignment: Alignment.centerLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 16),
-                        child: Text(
-                          l10n.settingsTitle,
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
+                      child: Text(
+                        l10n.settingsTitle,
+                        style: Theme.of(context).textTheme.titleLarge,
                       ),
                     ),
                   ),
@@ -178,7 +179,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             child: AbsorbPointer(
               absorbing: busy,
               child: ListView(
-                padding: const EdgeInsets.only(bottom: 72),
+                padding: const EdgeInsets.only(bottom: 24),
                 children: [
                   _SectionHeader(label: l10n.appearanceSection),
                   const _ThemeTile(),
@@ -186,6 +187,28 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   const _FontSizeTile(),
                   const Divider(height: 1, indent: 16),
                   const _FontFamilyTile(),
+                  _SectionHeader(label: l10n.remindersSection),
+                  const _PraiseRemindersTile(),
+                  // TEMP: remove after notification QA.
+                  const Divider(height: 1, indent: 56),
+                  _SettingsTile(
+                    icon: LucideIcons.bellRing,
+                    title: l10n.testNotificationTitle,
+                    subtitle: l10n.testNotificationSubtitle,
+                    onTap: () async {
+                      final granted = await PraiseNotificationService.instance
+                          .requestPermissionIfNeeded();
+                      if (!granted) {
+                        _showSnackBar(l10n.testNotificationPermissionDenied);
+                        return;
+                      }
+                      await PraiseNotificationService.instance
+                          .showTestNotification();
+                      if (mounted) {
+                        _showSnackBar(l10n.testNotificationSent);
+                      }
+                    },
+                  ),
                   _SectionHeader(label: l10n.dataSection),
                   _SettingsTile(
                     icon: LucideIcons.refreshCw,
@@ -223,6 +246,29 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 }
 
 // ── Appearance tiles ──────────────────────────────────────────────────────────
+
+class _PraiseRemindersTile extends ConsumerWidget {
+  const _PraiseRemindersTile();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final enabled = ref.watch(praiseRemindersProvider);
+    return SwitchListTile(
+      secondary: const Icon(LucideIcons.bell),
+      title: Text(
+        l10n.praiseRemindersTitle,
+        style: Theme.of(
+          context,
+        ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+      ),
+      subtitle: Text(l10n.praiseRemindersSubtitle),
+      value: enabled,
+      onChanged: (value) =>
+          ref.read(praiseRemindersProvider.notifier).setEnabled(value),
+    );
+  }
+}
 
 /// Three-way theme selector: Light / System / Dark.
 class _ThemeTile extends ConsumerWidget {
@@ -271,9 +317,6 @@ class _ThemeTile extends ConsumerWidget {
                   selected: {current},
                   onSelectionChanged: (s) =>
                       ref.read(themeProvider.notifier).setTheme(s.first),
-                  style: const ButtonStyle(
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
                 ),
               ],
             ),
@@ -332,17 +375,31 @@ class _FontSizeTile extends ConsumerWidget {
                       ref.read(fontSizeProvider.notifier).setFontSize(v),
                 ),
                 // Live preview
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceContainerLow,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: HymnTextDisplay(
-                    text: l10n.fontPreviewSample,
-                    textAlign: TextAlign.center,
-                  ),
+                Builder(
+                  builder: (context) {
+                    final scheme = Theme.of(context).colorScheme;
+                    final isDark =
+                        Theme.of(context).brightness == Brightness.dark;
+                    return Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? scheme.onSurface.withValues(alpha: 0.08)
+                            : const Color(0xFFF0E9DF),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: scheme.primary.withValues(
+                            alpha: isDark ? 0.22 : 0.12,
+                          ),
+                        ),
+                      ),
+                      child: HymnTextDisplay(
+                        text: l10n.fontPreviewSample,
+                        textAlign: TextAlign.center,
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
@@ -380,23 +437,52 @@ class _FontFamilyTile extends ConsumerWidget {
                   ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: HymnFontFamily.values.map((family) {
-                    final selected = family == current;
-                    return ChoiceChip(
-                      showCheckmark: false,
-                      label: Text(
-                        family.displayName,
-                        style: family.textStyle(fontSize: 13),
-                      ),
-                      selected: selected,
-                      onSelected: (_) => ref
-                          .read(fontFamilyProvider.notifier)
-                          .setFontFamily(family),
+                Builder(
+                  builder: (context) {
+                    final scheme = Theme.of(context).colorScheme;
+                    final isDark =
+                        Theme.of(context).brightness == Brightness.dark;
+                    final track = isDark
+                        ? scheme.onSurface.withValues(alpha: 0.08)
+                        : const Color(0xFFF0E9DF);
+                    final border = scheme.primary.withValues(
+                      alpha: isDark ? 0.22 : 0.12,
                     );
-                  }).toList(),
+                    return Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: HymnFontFamily.values.map((family) {
+                        final selected = family == current;
+                        return ChoiceChip(
+                          showCheckmark: false,
+                          selected: selected,
+                          onSelected: (_) => ref
+                              .read(fontFamilyProvider.notifier)
+                              .setFontFamily(family),
+                          backgroundColor: track,
+                          selectedColor: scheme.primary.withValues(
+                            alpha: isDark ? 0.22 : 0.14,
+                          ),
+                          side: BorderSide(color: border),
+                          label: Text(
+                            family.displayName,
+                            style: family
+                                .textStyle(fontSize: 13)
+                                .copyWith(
+                                  fontWeight: selected
+                                      ? FontWeight.w600
+                                      : FontWeight.w500,
+                                  color: selected
+                                      ? scheme.primary
+                                      : scheme.onSurface.withValues(
+                                          alpha: 0.55,
+                                        ),
+                                ),
+                          ),
+                        );
+                      }).toList(),
+                    );
+                  },
                 ),
               ],
             ),

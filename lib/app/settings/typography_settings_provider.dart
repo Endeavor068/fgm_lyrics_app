@@ -43,11 +43,10 @@ class FontSizeNotifier extends Notifier<double> {
 /// Curated set of fonts available for hymn text.
 enum HymnFontFamily {
   fraunces('Fraunces'),
-  inter('Inter'),
+  ibmPlexSans('IBM Plex Sans'),
   ebGaramond('EB Garamond'),
   lora('Lora'),
-  openSans('Open Sans'),
-  notoSerif('Noto Serif');
+  openSans('Open Sans');
 
   const HymnFontFamily(this.displayName);
 
@@ -66,7 +65,7 @@ enum HymnFontFamily {
       height: height,
       color: color,
     ),
-    HymnFontFamily.inter => GoogleFonts.inter(
+    HymnFontFamily.ibmPlexSans => GoogleFonts.ibmPlexSans(
       fontSize: fontSize,
       fontWeight: fontWeight,
       height: height,
@@ -85,12 +84,6 @@ enum HymnFontFamily {
       color: color,
     ),
     HymnFontFamily.openSans => GoogleFonts.openSans(
-      fontSize: fontSize,
-      fontWeight: fontWeight,
-      height: height,
-      color: color,
-    ),
-    HymnFontFamily.notoSerif => GoogleFonts.notoSerif(
       fontSize: fontSize,
       fontWeight: fontWeight,
       height: height,
@@ -115,9 +108,16 @@ class FontFamilyNotifier extends Notifier<HymnFontFamily> {
   Future<void> _load() async {
     final prefs = await SharedPreferences.getInstance();
     final saved = prefs.getString(_key);
-    if (saved == 'roboto') {
-      state = HymnFontFamily.inter;
-      await prefs.setString(_key, HymnFontFamily.inter.name);
+    // Legacy sans options → IBM Plex Sans
+    if (saved == 'roboto' || saved == 'inter') {
+      state = HymnFontFamily.ibmPlexSans;
+      await prefs.setString(_key, HymnFontFamily.ibmPlexSans.name);
+      return;
+    }
+    // Removed font option → default
+    if (saved == 'notoSerif') {
+      state = HymnFontFamily.fraunces;
+      await prefs.setString(_key, HymnFontFamily.fraunces.name);
       return;
     }
     state = HymnFontFamily.values.firstWhere(

@@ -134,6 +134,12 @@ class LyricRepository {
       hymns
           .map((h) => Lyric.fromHarmonyForge(h, french))
           .where((l) => french ? l.availableInFr : l.availableInEn)
+          // Drop incomplete / legacy "Untitled" stubs (no real title).
+          .where((l) {
+            final title = l.songTitle.trim();
+            if (title.isEmpty) return false;
+            return title.toLowerCase() != 'untitled';
+          })
           .toList(),
     );
   }

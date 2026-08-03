@@ -9,13 +9,19 @@ class AppLocalizationsFr extends AppLocalizations {
   AppLocalizationsFr([String locale = 'fr']) : super(locale);
 
   @override
-  String get appTitle => 'Cantiques FGM';
+  String get appTitle => 'MPE Cantiques';
 
   @override
   String get hymnalsTitle => 'Cantiques';
 
   @override
-  String get appBrandTagline => 'OFFICIEL · FGM';
+  String get appBrandTagline => 'OFFICIEL • MM';
+
+  @override
+  String get detailBrandTitle => 'MISSION PLEIN ÉVANGILE';
+
+  @override
+  String get detailBrandSubtitle => 'Cantiques • Officiel • MM';
 
   @override
   String get settingsTooltip => 'Réglages';
@@ -31,7 +37,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get searchTitle => 'Rechercher';
 
   @override
-  String get searchHint => 'Rechercher titre ou paroles…';
+  String get searchHint => 'Rechercher par numéro, titre, paroles ou auteur';
+
+  @override
+  String get scrollToTopToSearch => 'Remonter pour rechercher';
 
   @override
   String get favoritesTitle => 'Favoris';
@@ -41,7 +50,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'Aucun favori pour le moment.\nAjoutez des cantiques depuis la liste pour les voir ici.';
 
   @override
-  String get splashOrganizationName => 'MPE Cantiques - Officiel - MM';
+  String get splashOrganizationName => 'MPE Cantiques • Officiel • MM';
 
   @override
   String get settingsTitle => 'Réglages';
@@ -83,6 +92,42 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get appearanceSection => 'Apparence';
+
+  @override
+  String get remindersSection => 'Rappels';
+
+  @override
+  String get praiseRemindersTitle => 'Rappels de louange';
+
+  @override
+  String get praiseRemindersSubtitle =>
+      'Une notification par jour avec un message inspirant pour louer Dieu.';
+
+  @override
+  String get testNotificationTitle => 'Tester la notification';
+
+  @override
+  String get testNotificationSubtitle =>
+      'Envoyer un rappel de louange maintenant (temporaire).';
+
+  @override
+  String get testNotificationSent => 'Notification de test envoyée.';
+
+  @override
+  String get testNotificationPermissionDenied =>
+      'Permission de notification refusée.';
+
+  @override
+  String get audioNowPlaying => 'En lecture';
+
+  @override
+  String get audioReadyToPlay => 'Prêt à lire';
+
+  @override
+  String get audioTapToDownload => 'Appuyer pour télécharger';
+
+  @override
+  String get audioDownloading => 'Téléchargement…';
 
   @override
   String get dataSection => 'Données';
@@ -177,6 +222,17 @@ class AppLocalizationsFr extends AppLocalizations {
   String get projectionTab => 'Projection';
 
   @override
+  String get songHistoryTab => 'Histoire';
+
+  @override
+  String get songHistoryComingSoonTitle =>
+      'Histoire du chant bientôt disponible';
+
+  @override
+  String get songHistoryComingSoonBody =>
+      'L’histoire de ce cantique n’est pas encore disponible. Elle apparaîtra ici dès sa publication.';
+
+  @override
   String get composedLabel => 'Composé';
 
   @override
@@ -258,15 +314,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String couldNotOpenFile(String error) {
     return 'Impossible d\'ouvrir le fichier : $error';
   }
-
-  @override
-  String get shareSubjectSuffix => ' - Cantiques FGM';
-
-  @override
-  String get shareChorusPrefix => '*Chœur :*\n';
-
-  @override
-  String get shareRefrainPrefix => '*Refrain :*\n';
 
   @override
   String get downloadFailedGeneric =>
@@ -387,4 +434,21 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get pdfPageLoading => '…';
+
+  @override
+  String get upgradeDialogTitle => 'Mise à jour disponible';
+
+  @override
+  String upgradeDialogBody(String appName) {
+    return 'Une nouvelle version de $appName est prête. Mettez à jour pour profiter des derniers cantiques et améliorations.';
+  }
+
+  @override
+  String get upgradeDialogPrompt => 'Veuillez mettre à jour pour continuer.';
+
+  @override
+  String get upgradeDialogUpdate => 'Mettre à jour';
+
+  @override
+  String get upgradeDialogReleaseNotes => 'Nouveautés';
 }

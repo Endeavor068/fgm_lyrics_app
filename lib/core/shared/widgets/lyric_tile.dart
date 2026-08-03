@@ -1,21 +1,21 @@
 import 'package:fgm_lyrics_app/app/favorite/favorite_controller.dart';
 import 'package:fgm_lyrics_app/app/lyric/screens/lyric_detail_screen.dart';
 import 'package:fgm_lyrics_app/core/models/lyric.dart';
+import 'package:fgm_lyrics_app/core/theme/app_fonts.dart';
 import 'package:fgm_lyrics_app/core/utils/context_extension.dart';
 import 'package:fgm_lyrics_app/core/utils/string_extension.dart';
 import 'package:fgm_lyrics_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class LyricTile extends ConsumerWidget {
-  const LyricTile({super.key, required this.lyric, this.secondaryTitle});
+  const LyricTile({super.key, required this.lyric, this.onOpen});
 
   final Lyric lyric;
 
-  /// Title in the other language, shown under the primary title.
-  final String? secondaryTitle;
+  /// Called when the user opens this hymn (before navigation).
+  final VoidCallback? onOpen;
 
   String get _favoriteKey => lyric.id.toString();
 
@@ -40,14 +40,20 @@ class LyricTile extends ConsumerWidget {
     final title = lyric.songTitle.trim().isEmpty
         ? l10n.untitledHymn
         : lyric.songTitle.capitalize;
-    final subtitle = secondaryTitle?.trim();
-    final showSubtitle =
-        subtitle != null &&
-        subtitle.isNotEmpty &&
-        subtitle.toLowerCase() != lyric.songTitle.trim().toLowerCase();
+
+    final author = lyric.author.trim();
+    final year = lyric.displayYear.trim();
+    final metaParts = <String>[
+      if (author.isNotEmpty) author,
+      if (year.isNotEmpty) year,
+    ];
+    final metaLine = metaParts.join(' · ');
 
     return InkWell(
-      onTap: () => context.push(LyricDetailScreen(lyric: lyric)),
+      onTap: () {
+        onOpen?.call();
+        context.push(LyricDetailScreen(lyric: lyric));
+      },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 14),
         child: Row(
@@ -69,23 +75,25 @@ class LyricTile extends ConsumerWidget {
                     title,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.fraunces(
+                    style: TextStyle(
+                      fontFamily: AppFonts.fraunces,
                       fontSize: 17,
                       fontWeight: FontWeight.w700,
                       height: 1.25,
                       color: scheme.onSurface,
                     ),
                   ),
-                  if (showSubtitle) ...[
+                  if (metaLine.isNotEmpty) ...[
                     const SizedBox(height: 3),
                     Text(
-                      subtitle.capitalize,
+                      metaLine,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 13,
+                        fontSize: 12,
                         height: 1.25,
-                        color: scheme.onSurface.withValues(alpha: 0.45),
+                        fontWeight: FontWeight.w500,
+                        color: scheme.onSurface.withValues(alpha: 0.55),
                       ),
                     ),
                   ],
@@ -103,16 +111,12 @@ class LyricTile extends ConsumerWidget {
                     .toggleFavorite(lyric.id);
               },
               icon: Icon(
-                LucideIcons.heart,
-                size: 22,
+                isFavorite ? Icons.favorite_rounded : LucideIcons.heart,
+                size: 20,
                 color: isFavorite
                     ? scheme.primary
-                    : scheme.onSurface.withValues(alpha: 0.35),
+                    : scheme.onSurface.withValues(alpha: 0.32),
               ),
-            ),
-            Icon(
-              LucideIcons.chevronRight,
-              color: scheme.onSurface.withValues(alpha: 0.28),
             ),
           ],
         ),
@@ -149,7 +153,8 @@ class _NumberBadge extends StatelessWidget {
               child: Center(
                 child: Text(
                   number,
-                  style: GoogleFonts.fraunces(
+                  style: TextStyle(
+                    fontFamily: AppFonts.fraunces,
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
                     color: primary,

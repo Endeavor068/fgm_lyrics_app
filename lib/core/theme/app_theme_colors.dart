@@ -18,6 +18,14 @@ abstract final class AppThemeColors {
   /// Warm charcoal background (dark).
   static const Color darkScaffold = Color(0xFF141210);
 
+  /// Soft control track used by inputs, chips, and segmented controls (light).
+  /// Semi-transparent so it sits lightly on the parchment scaffold.
+  static const Color lightTrack = Color(0x66F0E9DF);
+
+  /// Soft control track for dark mode.
+  static Color darkTrack(ColorScheme scheme) =>
+      scheme.onSurface.withValues(alpha: 0.045);
+
   static ColorScheme lightScheme() {
     final scheme = ColorScheme.fromSeed(
       seedColor: lightSeed,
@@ -27,18 +35,24 @@ abstract final class AppThemeColors {
       surface: lightScaffold,
       primary: lightSeed,
       onPrimary: Colors.white,
+      secondaryContainer: lightSeed.withValues(alpha: 0.12),
+      onSecondaryContainer: lightSeed,
+      surfaceContainerHighest: lightTrack,
     );
   }
 
   static ColorScheme darkScheme() {
+    const primary = Color(0xFFE8A598);
     final scheme = ColorScheme.fromSeed(
       seedColor: darkSeed,
       brightness: Brightness.dark,
     );
     return scheme.copyWith(
       surface: darkScaffold,
-      primary: const Color(0xFFE8A598),
+      primary: primary,
       onPrimary: const Color(0xFF3B1410),
+      secondaryContainer: primary.withValues(alpha: 0.22),
+      onSecondaryContainer: primary,
     );
   }
 }

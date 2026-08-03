@@ -9,13 +9,19 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'FGM Hymns';
+  String get appTitle => 'FGM Hymnals';
 
   @override
   String get hymnalsTitle => 'Hymnals';
 
   @override
-  String get appBrandTagline => 'OFFICIAL · FGM';
+  String get appBrandTagline => 'OFFICIAL • MM';
+
+  @override
+  String get detailBrandTitle => 'FULL GOSPEL MISSION';
+
+  @override
+  String get detailBrandSubtitle => 'Hymnals • Official • MM';
 
   @override
   String get settingsTooltip => 'Settings';
@@ -31,7 +37,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchTitle => 'Search';
 
   @override
-  String get searchHint => 'Search title or lyrics…';
+  String get searchHint => 'Search by number, title, lyrics or author';
+
+  @override
+  String get scrollToTopToSearch => 'Back to top to search';
 
   @override
   String get favoritesTitle => 'Favorites';
@@ -41,7 +50,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'No favorites yet.\nAdd songs from the list to see them here.';
 
   @override
-  String get splashOrganizationName => 'FGM Hymnals - Official - MM';
+  String get splashOrganizationName => 'FGM Hymnals • Official • MM';
 
   @override
   String get settingsTitle => 'Settings';
@@ -82,6 +91,42 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appearanceSection => 'Appearance';
+
+  @override
+  String get remindersSection => 'Reminders';
+
+  @override
+  String get praiseRemindersTitle => 'Praise reminders';
+
+  @override
+  String get praiseRemindersSubtitle =>
+      'One daily notification with an inspirational message to praise God.';
+
+  @override
+  String get testNotificationTitle => 'Test notification';
+
+  @override
+  String get testNotificationSubtitle =>
+      'Send a sample praise reminder now (temporary).';
+
+  @override
+  String get testNotificationSent => 'Test notification sent.';
+
+  @override
+  String get testNotificationPermissionDenied =>
+      'Notification permission denied.';
+
+  @override
+  String get audioNowPlaying => 'Now playing';
+
+  @override
+  String get audioReadyToPlay => 'Ready to play';
+
+  @override
+  String get audioTapToDownload => 'Tap to download';
+
+  @override
+  String get audioDownloading => 'Downloading…';
 
   @override
   String get dataSection => 'Data';
@@ -171,10 +216,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get lyricsTab => 'Lyrics';
 
   @override
-  String get sheetMusicTab => 'Sheet Music';
+  String get sheetMusicTab => 'Score';
 
   @override
   String get projectionTab => 'Projection';
+
+  @override
+  String get songHistoryTab => 'History';
+
+  @override
+  String get songHistoryComingSoonTitle => 'Song history coming soon';
+
+  @override
+  String get songHistoryComingSoonBody =>
+      'The story behind this hymn is not available yet. It will appear here once published.';
 
   @override
   String get composedLabel => 'Composed';
@@ -256,15 +311,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String couldNotOpenFile(String error) {
     return 'Could not open file: $error';
   }
-
-  @override
-  String get shareSubjectSuffix => ' - FGM Hymns';
-
-  @override
-  String get shareChorusPrefix => '*Chorus :*\n';
-
-  @override
-  String get shareRefrainPrefix => '*Refrain :*\n';
 
   @override
   String get downloadFailedGeneric =>
@@ -383,4 +429,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pdfPageLoading => '…';
+
+  @override
+  String get upgradeDialogTitle => 'Update available';
+
+  @override
+  String upgradeDialogBody(String appName) {
+    return 'A newer version of $appName is ready. Update now to keep enjoying the latest hymns and improvements.';
+  }
+
+  @override
+  String get upgradeDialogPrompt => 'Please update to continue.';
+
+  @override
+  String get upgradeDialogUpdate => 'Update now';
+
+  @override
+  String get upgradeDialogReleaseNotes => 'What’s new';
 }

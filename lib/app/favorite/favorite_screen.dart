@@ -1,8 +1,9 @@
 import 'package:fgm_lyrics_app/app/favorite/favorite_controller.dart';
 import 'package:fgm_lyrics_app/app/locale/locale_provider.dart';
-import 'package:fgm_lyrics_app/app/lyric/screens/widgets/lyric_tile.dart';
-import 'package:fgm_lyrics_app/core/widgets/app_default_spacing.dart';
-import 'package:fgm_lyrics_app/core/widgets/scroll_hide_chrome.dart';
+import 'package:fgm_lyrics_app/core/shared/widgets/app_default_spacing.dart';
+import 'package:fgm_lyrics_app/core/shared/widgets/drawer_menu_button.dart';
+import 'package:fgm_lyrics_app/core/shared/widgets/lyric_tile.dart';
+import 'package:fgm_lyrics_app/core/shared/widgets/scroll_hide_chrome.dart';
 import 'package:fgm_lyrics_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -35,8 +36,9 @@ class FavoriteScreen extends ConsumerWidget {
                   height: kToolbarHeight,
                   child: NavigationToolbar(
                     centerMiddle: false,
-                    middle: Padding(
-                      padding: const EdgeInsets.only(left: 16),
+                    leading: const DrawerMenuButton(),
+                    middle: Align(
+                      alignment: Alignment.centerLeft,
                       child: Text(
                         l10n.favoritesTitle,
                         style: Theme.of(context).textTheme.titleLarge,

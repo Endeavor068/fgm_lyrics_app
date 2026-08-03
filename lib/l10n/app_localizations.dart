@@ -101,7 +101,7 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
-  /// **'FGM Hymns'**
+  /// **'FGM Hymnals'**
   String get appTitle;
 
   /// No description provided for @hymnalsTitle.
@@ -113,8 +113,20 @@ abstract class AppLocalizations {
   /// No description provided for @appBrandTagline.
   ///
   /// In en, this message translates to:
-  /// **'OFFICIAL · FGM'**
+  /// **'OFFICIAL • MM'**
   String get appBrandTagline;
+
+  /// No description provided for @detailBrandTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'FULL GOSPEL MISSION'**
+  String get detailBrandTitle;
+
+  /// No description provided for @detailBrandSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hymnals • Official • MM'**
+  String get detailBrandSubtitle;
 
   /// No description provided for @settingsTooltip.
   ///
@@ -143,8 +155,14 @@ abstract class AppLocalizations {
   /// No description provided for @searchHint.
   ///
   /// In en, this message translates to:
-  /// **'Search title or lyrics…'**
+  /// **'Search by number, title, lyrics or author'**
   String get searchHint;
+
+  /// No description provided for @scrollToTopToSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to top to search'**
+  String get scrollToTopToSearch;
 
   /// No description provided for @favoritesTitle.
   ///
@@ -161,7 +179,7 @@ abstract class AppLocalizations {
   /// No description provided for @splashOrganizationName.
   ///
   /// In en, this message translates to:
-  /// **'FGM Hymnals - Official - MM'**
+  /// **'FGM Hymnals • Official • MM'**
   String get splashOrganizationName;
 
   /// No description provided for @settingsTitle.
@@ -241,6 +259,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Appearance'**
   String get appearanceSection;
+
+  /// No description provided for @remindersSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders'**
+  String get remindersSection;
+
+  /// No description provided for @praiseRemindersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Praise reminders'**
+  String get praiseRemindersTitle;
+
+  /// No description provided for @praiseRemindersSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'One daily notification with an inspirational message to praise God.'**
+  String get praiseRemindersSubtitle;
+
+  /// No description provided for @testNotificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Test notification'**
+  String get testNotificationTitle;
+
+  /// No description provided for @testNotificationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Send a sample praise reminder now (temporary).'**
+  String get testNotificationSubtitle;
+
+  /// No description provided for @testNotificationSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Test notification sent.'**
+  String get testNotificationSent;
+
+  /// No description provided for @testNotificationPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification permission denied.'**
+  String get testNotificationPermissionDenied;
+
+  /// No description provided for @audioNowPlaying.
+  ///
+  /// In en, this message translates to:
+  /// **'Now playing'**
+  String get audioNowPlaying;
+
+  /// No description provided for @audioReadyToPlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to play'**
+  String get audioReadyToPlay;
+
+  /// No description provided for @audioTapToDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to download'**
+  String get audioTapToDownload;
+
+  /// No description provided for @audioDownloading.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading…'**
+  String get audioDownloading;
 
   /// No description provided for @dataSection.
   ///
@@ -401,7 +485,7 @@ abstract class AppLocalizations {
   /// No description provided for @sheetMusicTab.
   ///
   /// In en, this message translates to:
-  /// **'Sheet Music'**
+  /// **'Score'**
   String get sheetMusicTab;
 
   /// No description provided for @projectionTab.
@@ -409,6 +493,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Projection'**
   String get projectionTab;
+
+  /// No description provided for @songHistoryTab.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get songHistoryTab;
+
+  /// No description provided for @songHistoryComingSoonTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Song history coming soon'**
+  String get songHistoryComingSoonTitle;
+
+  /// No description provided for @songHistoryComingSoonBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The story behind this hymn is not available yet. It will appear here once published.'**
+  String get songHistoryComingSoonBody;
 
   /// No description provided for @composedLabel.
   ///
@@ -553,24 +655,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not open file: {error}'**
   String couldNotOpenFile(String error);
-
-  /// No description provided for @shareSubjectSuffix.
-  ///
-  /// In en, this message translates to:
-  /// **' - FGM Hymns'**
-  String get shareSubjectSuffix;
-
-  /// No description provided for @shareChorusPrefix.
-  ///
-  /// In en, this message translates to:
-  /// **'*Chorus :*\n'**
-  String get shareChorusPrefix;
-
-  /// No description provided for @shareRefrainPrefix.
-  ///
-  /// In en, this message translates to:
-  /// **'*Refrain :*\n'**
-  String get shareRefrainPrefix;
 
   /// No description provided for @downloadFailedGeneric.
   ///
@@ -775,6 +859,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'…'**
   String get pdfPageLoading;
+
+  /// No description provided for @upgradeDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update available'**
+  String get upgradeDialogTitle;
+
+  /// No description provided for @upgradeDialogBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A newer version of {appName} is ready. Update now to keep enjoying the latest hymns and improvements.'**
+  String upgradeDialogBody(String appName);
+
+  /// No description provided for @upgradeDialogPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Please update to continue.'**
+  String get upgradeDialogPrompt;
+
+  /// No description provided for @upgradeDialogUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Update now'**
+  String get upgradeDialogUpdate;
+
+  /// No description provided for @upgradeDialogReleaseNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'What’s new'**
+  String get upgradeDialogReleaseNotes;
 }
 
 class _AppLocalizationsDelegate

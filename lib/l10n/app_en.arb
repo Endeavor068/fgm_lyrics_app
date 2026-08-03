@@ -1,16 +1,19 @@
 {
   "@@locale": "en",
-  "appTitle": "FGM Hymns",
+  "appTitle": "FGM Hymnals",
   "hymnalsTitle": "Hymnals",
-  "appBrandTagline": "OFFICIAL · FGM",
+  "appBrandTagline": "OFFICIAL • MM",
+  "detailBrandTitle": "FULL GOSPEL MISSION",
+  "detailBrandSubtitle": "Hymnals • Official • MM",
   "settingsTooltip": "Settings",
   "couldNotLoadHymns": "Could not load hymns. Check connection or retry.",
   "retry": "Retry",
   "searchTitle": "Search",
-  "searchHint": "Search title or lyrics…",
+  "searchHint": "Search by number, title, lyrics or author",
+  "scrollToTopToSearch": "Back to top to search",
   "favoritesTitle": "Favorites",
   "favoritesEmpty": "No favorites yet.\nAdd songs from the list to see them here.",
-  "splashOrganizationName": "FGM Hymnals - Official - MM",
+  "splashOrganizationName": "FGM Hymnals • Official • MM",
   "settingsTitle": "Settings",
   "navHome": "Home",
   "navFavorites": "Favorites",
@@ -24,6 +27,17 @@
   "addToFavorites": "Add to favorites",
   "removeFromFavorites": "Remove from favorites",
   "appearanceSection": "Appearance",
+  "remindersSection": "Reminders",
+  "praiseRemindersTitle": "Praise reminders",
+  "praiseRemindersSubtitle": "One daily notification with an inspirational message to praise God.",
+  "testNotificationTitle": "Test notification",
+  "testNotificationSubtitle": "Send a sample praise reminder now (temporary).",
+  "testNotificationSent": "Test notification sent.",
+  "testNotificationPermissionDenied": "Notification permission denied.",
+  "audioNowPlaying": "Now playing",
+  "audioReadyToPlay": "Ready to play",
+  "audioTapToDownload": "Tap to download",
+  "audioDownloading": "Downloading…",
   "dataSection": "Data",
   "legalSection": "Legal",
   "privacyPolicyTitle": "Privacy Policy",
@@ -57,8 +71,11 @@
   "downloadedDataCleared": "Downloaded data cleared.",
   "failedToClearData": "Failed to clear some data. Please try again.",
   "lyricsTab": "Lyrics",
-  "sheetMusicTab": "Sheet Music",
+  "sheetMusicTab": "Score",
   "projectionTab": "Projection",
+  "songHistoryTab": "History",
+  "songHistoryComingSoonTitle": "Song history coming soon",
+  "songHistoryComingSoonBody": "The story behind this hymn is not available yet. It will appear here once published.",
   "composedLabel": "Composed",
   "keyLabel": "Key",
   "notAvailable": "N/A",
@@ -114,9 +131,6 @@
       }
     }
   },
-  "shareSubjectSuffix": " - FGM Hymns",
-  "shareChorusPrefix": "*Chorus :*\n",
-  "shareRefrainPrefix": "*Refrain :*\n",
   "downloadFailedGeneric": "Download failed. Please try again later.",
   "corruptFileRedownloading": "Corrupt file removed. Re-downloading…",
   "audioCouldNotPlay": "Audio file could not be played.",
@@ -160,5 +174,17 @@
       }
     }
   },
-  "pdfPageLoading": "…"
+  "pdfPageLoading": "…",
+  "upgradeDialogTitle": "Update available",
+  "upgradeDialogBody": "A newer version of {appName} is ready. Update now to keep enjoying the latest hymns and improvements.",
+  "@upgradeDialogBody": {
+    "placeholders": {
+      "appName": {
+        "type": "String"
+      }
+    }
+  },
+  "upgradeDialogPrompt": "Please update to continue.",
+  "upgradeDialogUpdate": "Update now",
+  "upgradeDialogReleaseNotes": "What’s new"
 }

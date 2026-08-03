@@ -43,11 +43,16 @@ class Lyric {
   /// True when [HarmonyForgeHymn.content] has meaningful French text.
   final bool availableInFr;
 
-  /// Whether [content] has a non-empty title or at least one non-empty verse.
+  /// Whether [content] is complete enough to show in a language list.
+  ///
+  /// Requires a real title, or a hymn number plus at least one verse — never
+  /// blank "Untitled" stubs that only have leftover empty fields.
   static bool hasMeaningfulContent(HarmonyForgeContent? content) {
     if (content == null) return false;
     if (content.title.trim().isNotEmpty) return true;
-    return content.verses.any((line) => line.trim().isNotEmpty);
+    final hasNumber = content.number.trim().isNotEmpty;
+    final hasVerse = content.verses.any((line) => line.trim().isNotEmpty);
+    return hasNumber && hasVerse;
   }
 
   /// Builds a [Lyric] from a HarmonyForge hymn and language.
@@ -85,13 +90,17 @@ class Lyric {
       fallback?.partitionUrl,
     );
     final parsedSongId = _parseInt(number, 0);
-    final titleFallback = parsedSongId > 0
-        ? 'Hymn $parsedSongId'
-        : (number.isNotEmpty ? 'Hymn $number' : 'Untitled');
+    // Prefer a real title; numbered hymns without a title stay "Hymn N".
+    // Never invent a bare "Untitled" label — those rows are filtered out.
+    final resolvedTitle = title.isNotEmpty
+        ? title
+        : (parsedSongId > 0
+              ? 'Hymn $parsedSongId'
+              : (number.isNotEmpty ? 'Hymn $number' : ''));
 
     return Lyric(
       id: hymn.id,
-      songTitle: title.isNotEmpty ? title : titleFallback,
+      songTitle: resolvedTitle,
       songId: parsedSongId,
       chorus: chorus,
       key: key,

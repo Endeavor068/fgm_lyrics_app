@@ -1,10 +1,12 @@
+import 'dart:async';
+
 import 'package:fgm_lyrics_app/app/locale/locale_provider.dart';
 import 'package:fgm_lyrics_app/app/lyric/lyric_controller.dart';
-import 'package:fgm_lyrics_app/app/lyric/screens/lyric_list_screen.dart';
 import 'package:fgm_lyrics_app/core/models/lyric.dart';
+import 'package:fgm_lyrics_app/core/shared/widgets/app_default_spacing.dart';
+import 'package:fgm_lyrics_app/core/shared/widgets/lyric_list_view.dart';
 import 'package:fgm_lyrics_app/core/utils/context_extension.dart';
 import 'package:fgm_lyrics_app/core/utils/hymn_search.dart';
-import 'package:fgm_lyrics_app/core/widgets/app_default_spacing.dart';
 import 'package:fgm_lyrics_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
@@ -22,17 +24,29 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   List<Lyric> _filteredLyrics = [];
+  Timer? _debounce;
+  static const _debounceDuration = Duration(milliseconds: 250);
 
   @override
   void initState() {
     super.initState();
-    _controller.addListener(_filter);
+    _controller.addListener(_onQueryChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _focusNode.requestFocus();
     });
   }
 
-  void _filter() {
+  void _onQueryChanged() {
+    _debounce?.cancel();
+    final query = _controller.text.trim();
+    if (query.isEmpty) {
+      _applyFilter();
+      return;
+    }
+    _debounce = Timer(_debounceDuration, _applyFilter);
+  }
+
+  void _applyFilter() {
     final query = _controller.text.trim();
     final isEnglish = ref.read(deviceLocaleProvider) == LanguageEnum.en.name;
     final english = ref.read(englishHymnProvider).value ?? const <Lyric>[];
@@ -53,7 +67,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
   @override
   void dispose() {
-    _controller.removeListener(_filter);
+    _debounce?.cancel();
+    _controller.removeListener(_onQueryChanged);
     _controller.dispose();
     _focusNode.dispose();
     super.dispose();
@@ -128,8 +143,17 @@ class SearchInputField extends StatelessWidget {
         return TextFormField(
           controller: controller,
           focusNode: focusNode,
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+            color: scheme.onSurface,
+          ),
           decoration: InputDecoration(
-            prefixIcon: const Icon(LucideIcons.search, color: Colors.grey),
+            prefixIcon: Icon(
+              LucideIcons.search,
+              size: 20,
+              color: scheme.onSurface.withValues(alpha: 0.34),
+            ),
             hintText: hintText,
             suffixIcon: value.text.isNotEmpty
                 ? IconButton(
@@ -137,7 +161,8 @@ class SearchInputField extends StatelessWidget {
                     onPressed: controller.clear,
                     icon: Icon(
                       LucideIcons.x,
-                      color: scheme.onSurface.withValues(alpha: 0.45),
+                      size: 18,
+                      color: scheme.onSurface.withValues(alpha: 0.4),
                     ),
                   )
                 : null,

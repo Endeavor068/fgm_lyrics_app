@@ -1,21 +1,18 @@
 extension StringExtension on String {
-  /// Strips HTML tags so the string can be used in plain-text contexts
-  /// such as share sheets or notifications.
+  /// Strips HTML tags for plain-text display.
   String get stripHtmlTags =>
       replaceAll(RegExp(r'<[^>]*>'), '').replaceAll('&nbsp;', ' ').trim();
 
   /// Splits hymn text into display lines, treating HTML block/break tags as
   /// newlines before stripping remaining markup.
   List<String> get lyricLines {
-    final withBreaks = replaceAll(
-      RegExp(r'<br\s*/?>', caseSensitive: false),
-      '\n',
-    )
-        .replaceAll(RegExp(r'</p\s*>', caseSensitive: false), '\n')
-        .replaceAll(RegExp(r'<p[^>]*>', caseSensitive: false), '\n')
-        .replaceAll(RegExp(r'</div\s*>', caseSensitive: false), '\n')
-        .replaceAll(RegExp(r'<div[^>]*>', caseSensitive: false), '\n')
-        .replaceAll(RegExp(r'</li\s*>', caseSensitive: false), '\n');
+    final withBreaks =
+        replaceAll(RegExp(r'<br\s*/?>', caseSensitive: false), '\n')
+            .replaceAll(RegExp(r'</p\s*>', caseSensitive: false), '\n')
+            .replaceAll(RegExp(r'<p[^>]*>', caseSensitive: false), '\n')
+            .replaceAll(RegExp(r'</div\s*>', caseSensitive: false), '\n')
+            .replaceAll(RegExp(r'<div[^>]*>', caseSensitive: false), '\n')
+            .replaceAll(RegExp(r'</li\s*>', caseSensitive: false), '\n');
 
     return withBreaks.stripHtmlTags
         .split(RegExp(r'\r?\n'))

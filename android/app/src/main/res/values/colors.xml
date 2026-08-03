@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Matches AppThemeColors.lightScaffold — native launch / Flutter handoff. -->
+    <color name="launch_background">#FDFBF7</color>
+    <!-- Slightly deeper parchment so the logo reads clearly on the system splash icon. -->
+    <color name="launch_icon_background">#F0E9DF</color>
+    <color name="ic_launcher_background">#F0E9DF</color>
+</resources>

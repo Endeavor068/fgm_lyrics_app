@@ -1,8 +1,9 @@
 import 'package:fgm_lyrics_app/app/payment/payment_provider.dart';
+import 'package:fgm_lyrics_app/core/shared/widgets/app_default_spacing.dart';
+import 'package:fgm_lyrics_app/core/shared/widgets/app_progress_indicator.dart';
 import 'package:fgm_lyrics_app/core/utils/context_extension.dart';
-import 'package:fgm_lyrics_app/core/widgets/app_default_spacing.dart';
+import 'package:fgm_lyrics_app/core/utils/image_decode.dart';
 import 'package:fgm_lyrics_app/core/widgets/app_headline_text.dart';
-import 'package:fgm_lyrics_app/core/widgets/app_progress_indicator.dart';
 import 'package:fgm_lyrics_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
@@ -44,7 +45,12 @@ class _PayWallScreenState extends ConsumerState<PayWallScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Image.asset('assets/logo_pay.png', height: 250),
+                Image.asset(
+                  'assets/logo_pay.png',
+                  height: 250,
+                  cacheHeight: imageCachePx(context, 250),
+                  filterQuality: FilterQuality.medium,
+                ),
                 AppHeadlineText(text: l10n.payWallTitle),
                 const GutterTiny(),
                 Text(
@@ -84,21 +90,27 @@ class _PayWallScreenState extends ConsumerState<PayWallScreen> {
                   ),
                 if (purchaseState.isStoreAvailable) ...[
                   const Gutter(),
-                  ElevatedButton.icon(
-                    onPressed:
-                        purchaseState.product == null || purchaseState.isBusy
-                        ? null
-                        : () => ref
-                              .read(purchaseProvider.notifier)
-                              .buyFullAccess(),
-                    label: Text(
-                      purchaseState.isPurchasing
-                          ? l10n.paymentProcessing
-                          : l10n.payWallPurchase,
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed:
+                          purchaseState.product == null || purchaseState.isBusy
+                          ? null
+                          : () => ref
+                                .read(purchaseProvider.notifier)
+                                .buyFullAccess(),
+                      label: Text(
+                        purchaseState.isPurchasing
+                            ? l10n.paymentProcessing
+                            : l10n.payWallPurchase,
+                      ),
+                      icon: purchaseState.isBusy
+                          ? const AppProgressIndicator(
+                              size: 18,
+                              strokeWidth: 2.2,
+                            )
+                          : const Icon(LucideIcons.shoppingBag, size: 18),
                     ),
-                    icon: purchaseState.isBusy
-                        ? const AppProgressIndicator(size: 20, strokeWidth: 2.4)
-                        : null,
                   ),
                 ],
                 const Gutter(),
@@ -184,28 +196,14 @@ class _PayWallScreenState extends ConsumerState<PayWallScreen> {
                   textAlign: TextAlign.center,
                 ),
                 const Gutter.custom(size: 24),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(dialogContext).pop();
-                    widget.onUnlocked();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.green.shade600,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 32,
-                      vertical: 12,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                  child: Text(
-                    l10n.paymentSuccessContinue,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop();
+                      widget.onUnlocked();
+                    },
+                    child: Text(l10n.paymentSuccessContinue),
                   ),
                 ),
               ],
